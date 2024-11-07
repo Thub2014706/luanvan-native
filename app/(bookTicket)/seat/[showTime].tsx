@@ -17,6 +17,7 @@ import moment from 'moment';
 import { Image } from 'expo-image';
 import { useDispatch, useSelector } from 'react-redux';
 import { cartTicketValue, clearAllTicket } from '~/redux/cart/cartSlice';
+import PayContainer from '~/components/PayContainer/PayContainer';
 
 const Seat = () => {
     const user = useSelector((state) => state.auth.login.currentUser);
@@ -288,8 +289,18 @@ const Seat = () => {
     // console.log(infoAge[standardAge.findIndex((age) => age === film?.age)]);
 
     return film && theater ? (
-        <>
-            <BackIcon />
+        <React.Fragment>
+            <BackIcon
+                action={
+                    <Text
+                        style={{ fontSize: 18, fontWeight: '500', marginStart: 10 }}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
+                        {film.name}
+                    </Text>
+                }
+            />
             <ScrollView>
                 <View style={styles.container}>
                     <View>
@@ -335,66 +346,73 @@ const Seat = () => {
                         </View>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 'auto' }}>
                             <View style={styles.table}>
-                                {rows.map((row) => (
-                                    <View key={row} style={styles.row}>
-                                        {seats
-                                            .filter((seat) => seat.row === row)
-                                            .map(
-                                                (seat) =>
-                                                    !seat.isDelete && (
-                                                        <TouchableWithoutFeedback
-                                                            key={seat._id}
-                                                            onPress={() =>
-                                                                !selled.includes(seat._id) &&
-                                                                !hold.includes(seat._id) &&
-                                                                seat.status === true &&
-                                                                (seat.type !== typeSeatEnum[2]
-                                                                    ? handleSelectSeat(seat)
-                                                                    : handleSelectSeatCouple(seat))
-                                                            }
-                                                        >
-                                                            <View
-                                                                style={[
-                                                                    styles.col,
-                                                                    seat.type === typeSeatEnum[0] && styles.standard,
-                                                                    seat.type === typeSeatEnum[1] && styles.vip,
-                                                                    seat.type === typeSeatEnum[2] && styles.couple,
-                                                                    !seat.status && styles.inaction,
-                                                                    selectSeat.find((item) => item === seat) &&
-                                                                        styles.select,
-                                                                    (selled.includes(seat._id) ||
-                                                                        hold.includes(seat._id)) &&
-                                                                        styles.selled,
-                                                                    {
-                                                                        marginBottom: seat.bottom * 20,
-                                                                        marginLeft: seat.left * 22.5,
-                                                                        marginRight: seat.right * 22.5,
-                                                                    },
-                                                                ]}
+                                {rows.map((row) => {
+                                    return (
+                                        <View key={row} style={styles.row}>
+                                            {seats
+                                                .filter((seat) => seat.row === row)
+                                                .map((seat) => {
+                                                    return (
+                                                        !seat.isDelete && (
+                                                            <TouchableWithoutFeedback
+                                                                key={seat._id}
+                                                                onPress={() =>
+                                                                    !selled.includes(seat._id) &&
+                                                                    !hold.includes(seat._id) &&
+                                                                    seat.status === true &&
+                                                                    (seat.type !== typeSeatEnum[2]
+                                                                        ? handleSelectSeat(seat)
+                                                                        : handleSelectSeatCouple(seat))
+                                                                }
                                                             >
-                                                                <Text
+                                                                <View
                                                                     style={[
-                                                                        seat.type === typeSeatEnum[0] && styles.color1,
-                                                                        seat.type === typeSeatEnum[1] && styles.color1,
-                                                                        seat.type === typeSeatEnum[2] && styles.color2,
-                                                                        !seat.status && styles.color3,
+                                                                        styles.col,
+                                                                        seat.type === typeSeatEnum[0] &&
+                                                                            styles.standard,
+                                                                        seat.type === typeSeatEnum[1] && styles.vip,
+                                                                        seat.type === typeSeatEnum[2] && styles.couple,
+                                                                        !seat.status && styles.inaction,
                                                                         selectSeat.find((item) => item === seat) &&
-                                                                            styles.color2,
+                                                                            styles.select,
                                                                         (selled.includes(seat._id) ||
                                                                             hold.includes(seat._id)) &&
-                                                                            styles.color3,
-                                                                        { fontWeight: '500' },
+                                                                            styles.selled,
+                                                                        {
+                                                                            marginBottom: seat.bottom * 20,
+                                                                            marginLeft: seat.left * 22.5,
+                                                                            marginRight: seat.right * 22.5,
+                                                                        },
                                                                     ]}
                                                                 >
-                                                                    {String.fromCharCode(64 + row)}
-                                                                    {seat.col}
-                                                                </Text>
-                                                            </View>
-                                                        </TouchableWithoutFeedback>
-                                                    ),
-                                            )}
-                                    </View>
-                                ))}
+                                                                    <Text
+                                                                        style={[
+                                                                            seat.type === typeSeatEnum[0] &&
+                                                                                styles.color1,
+                                                                            seat.type === typeSeatEnum[1] &&
+                                                                                styles.color1,
+                                                                            seat.type === typeSeatEnum[2] &&
+                                                                                styles.color2,
+                                                                            !seat.status && styles.color3,
+                                                                            selectSeat.find((item) => item === seat) &&
+                                                                                styles.color2,
+                                                                            (selled.includes(seat._id) ||
+                                                                                hold.includes(seat._id)) &&
+                                                                                styles.color3,
+                                                                            { fontWeight: '500' },
+                                                                        ]}
+                                                                    >
+                                                                        {String.fromCharCode(64 + row)}
+                                                                        {seat.col}
+                                                                    </Text>
+                                                                </View>
+                                                            </TouchableWithoutFeedback>
+                                                        )
+                                                    );
+                                                })}
+                                        </View>
+                                    );
+                                })}
                             </View>
                         </ScrollView>
                         <View
@@ -446,36 +464,8 @@ const Seat = () => {
                     </View>
                 </View>
             </ScrollView>
-            <View style={styles.payContant}>
-                <View style={{ width: '60%' }}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ marginEnd: 5 }}>{selectSeat.length} Ghế: </Text>
-                        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                            {selectSeat.map((seat, index) => (
-                                <Text style={{ fontWeight: '500' }} key={seat._id}>
-                                    {String.fromCharCode(64 + seat.row)}
-                                    {seat.col}
-                                    {index < selectSeat.length - 1 && ', '}
-                                </Text>
-                            ))}
-                        </View>
-                    </View>
-                    <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                        <Text style={{ marginEnd: 5 }}>Tổng cộng: </Text>
-                        <Text style={{ color: '#3a2a62', fontWeight: '500' }}>
-                            {priceSeat.toLocaleString('it-IT')} VNĐ
-                        </Text>
-                    </View>
-                </View>
-                <View style={{ margin: 10 }}>
-                    <TouchableWithoutFeedback onPress={handleNext}>
-                        <View style={styles.button}>
-                            <Text style={{ color: 'white' }}>Tiếp theo</Text>
-                        </View>
-                    </TouchableWithoutFeedback>
-                </View>
-            </View>
-        </>
+            <PayContainer selectSeat={selectSeat} priceSeat={priceSeat} handleNext={handleNext} />
+        </React.Fragment>
     ) : (
         <Text>Loading...</Text>
     );
@@ -547,26 +537,5 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         width: WIDTH - 120,
         // flex: 2,
-    },
-    payContant: {
-        shadowOffset: { width: -2, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 3,
-        backgroundColor: 'white',
-        elevation: 5,
-        padding: 10,
-        position: 'absolute',
-        bottom: 0,
-        width: WIDTH - 20,
-        marginHorizontal: 10,
-        borderRadius: 5,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    button: {
-        padding: 10,
-        backgroundColor: '#3a2a62',
-        borderRadius: 10,
     },
 });

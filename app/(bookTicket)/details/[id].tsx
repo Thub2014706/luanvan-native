@@ -28,7 +28,7 @@ const pickerStyle = {
         borderRadius: 5,
         backgroundColor: '#e1e1e1',
         marginVertical: 10,
-        padding: 15
+        padding: 15,
     },
     placeholder: {
         color: 'black',
@@ -143,7 +143,17 @@ const DetailFilm = () => {
 
     return film !== null ? (
         <>
-            <BackIcon />
+            <BackIcon
+                action={
+                    <Text
+                        style={{ fontSize: 18, fontWeight: '500', marginHorizontal: 10 }}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
+                        {film.data.name}
+                    </Text>
+                }
+            />
             <ScrollView>
                 <View style={styles.container}>
                     <View style={styles.containerInfo}>
@@ -165,21 +175,25 @@ const DetailFilm = () => {
                     <View style={styles.body}>
                         <View style={styles.inline}>
                             <Text>Đạo diễn: </Text>
-                            {film.arrayDirector.map((item, index) => (
-                                <Text key={item._id} style={styles.text}>
-                                    {item}
-                                    {index < film.arrayDirector.length - 1 && ', '}
-                                </Text>
-                            ))}
+                            {film.arrayDirector.map((item, index) => {
+                                return (
+                                    <Text key={item._id} style={styles.text}>
+                                        {item}
+                                        {index < film.arrayDirector.length - 1 && ', '}
+                                    </Text>
+                                );
+                            })}
                         </View>
                         <View style={styles.inline}>
                             <Text>Diễn viên: </Text>
-                            {film.arrayPerformer.map((item, index) => (
-                                <Text key={item._id} style={styles.text}>
-                                    {item}
-                                    {index < film.arrayPerformer.length - 1 && ', '}
-                                </Text>
-                            ))}
+                            {film.arrayPerformer.map((item, index) => {
+                                return (
+                                    <Text key={item._id} style={styles.text}>
+                                        {item}
+                                        {index < film.arrayPerformer.length - 1 && ', '}
+                                    </Text>
+                                );
+                            })}
                         </View>
                         <View>
                             <Text>Mô tả phim: </Text>
@@ -216,92 +230,94 @@ const DetailFilm = () => {
                             }}
                         />
                         <View>
-                            {theaters.map((item, index) => (
-                                <LinearGradient
-                                    key={item._id}
-                                    colors={['#d5bcfc', '#aec7fa']}
-                                    style={styles.theaterContant}
-                                    start={{ x: 0.45, y: 0.25 }}
-                                    end={{ x: 0.5, y: 1.0 }}
-                                >
-                                    <Text style={{ fontWeight: '500', fontSize: 18 }}>{item.theater.name}</Text>
-                                    <Text style={{ fontWeight: '300' }}>
-                                        {item.theater.address}, {item.theater.ward}, {item.theater.district},{' '}
-                                        {item.theater.province}
-                                    </Text>
-                                    <View>
-                                        {item.showTimes.length > 0 ? (
-                                            Object.entries(
-                                                item.showTimes.reduce((acc, mini) => {
-                                                    if (!acc[mini.translate]) {
-                                                        acc[mini.translate] = [];
-                                                    }
-                                                    acc[mini.translate].push(mini);
-                                                    return acc;
-                                                }, {}),
-                                            ).map(([translate, mini]) => (
-                                                <View key={mini._id}>
-                                                    <Text style={{ marginTop: 5 }}>{translate}</Text>
-                                                    <View
-                                                        style={{
-                                                            flexDirection: 'row',
-                                                            gap: 10,
-                                                            flexWrap: 'wrap',
-                                                            // justifyContent: 'space-between',
-                                                        }}
-                                                    >
-                                                        {mini.map((min) => (
-                                                            <TouchableWithoutFeedback
-                                                                key={min._id}
-                                                                onPress={() => {
-                                                                    if (
-                                                                        min.status === statusShowTime[2] &&
-                                                                        min.test === 1 &&
-                                                                        min.late === 1
-                                                                    ) {
-                                                                        handleSeat(min._id);
-                                                                    }
-                                                                }}
-                                                            >
-                                                                <Text
-                                                                    style={[
-                                                                        styles.showTimeDecor,
-                                                                        min.status === statusShowTime[2] &&
-                                                                        min.test === 1 &&
-                                                                        min.late === 1
-                                                                            ? styles.yes2
-                                                                            : styles.no2,
-                                                                    ]}
+                            {theaters.map((item, index) => {
+                                return (
+                                    <LinearGradient
+                                        key={item._id}
+                                        colors={['#d5bcfc', '#aec7fa']}
+                                        style={styles.theaterContant}
+                                        start={{ x: 0.45, y: 0.25 }}
+                                        end={{ x: 0.5, y: 1.0 }}
+                                    >
+                                        <Text style={{ fontWeight: '500', fontSize: 18 }}>{item.theater.name}</Text>
+                                        <Text style={{ fontWeight: '300' }}>
+                                            {item.theater.address}, {item.theater.ward}, {item.theater.district},{' '}
+                                            {item.theater.province}
+                                        </Text>
+                                        <View>
+                                            {item.showTimes.length > 0 ? (
+                                                Object.entries(
+                                                    item.showTimes.reduce((acc, mini) => {
+                                                        if (!acc[mini.translate]) {
+                                                            acc[mini.translate] = [];
+                                                        }
+                                                        acc[mini.translate].push(mini);
+                                                        return acc;
+                                                    }, {}),
+                                                ).map(([translate, mini]) => (
+                                                    <View key={mini._id}>
+                                                        <Text style={{ marginTop: 5 }}>{translate}</Text>
+                                                        <View
+                                                            style={{
+                                                                flexDirection: 'row',
+                                                                gap: 10,
+                                                                flexWrap: 'wrap',
+                                                                // justifyContent: 'space-between',
+                                                            }}
+                                                        >
+                                                            {mini.map((min) => (
+                                                                <TouchableWithoutFeedback
+                                                                    key={min._id}
+                                                                    onPress={() => {
+                                                                        if (
+                                                                            min.status === statusShowTime[2] &&
+                                                                            min.test === 1 &&
+                                                                            min.late === 1
+                                                                        ) {
+                                                                            handleSeat(min._id);
+                                                                        }
+                                                                    }}
                                                                 >
-                                                                    {min.timeStart}
-                                                                </Text>
-                                                            </TouchableWithoutFeedback>
-                                                        ))}
+                                                                    <Text
+                                                                        style={[
+                                                                            styles.showTimeDecor,
+                                                                            min.status === statusShowTime[2] &&
+                                                                            min.test === 1 &&
+                                                                            min.late === 1
+                                                                                ? styles.yes2
+                                                                                : styles.no2,
+                                                                        ]}
+                                                                    >
+                                                                        {min.timeStart}
+                                                                    </Text>
+                                                                </TouchableWithoutFeedback>
+                                                            ))}
+                                                        </View>
                                                     </View>
+                                                ))
+                                            ) : (
+                                                <View
+                                                    style={{
+                                                        borderRadius: 4,
+                                                        padding: 8,
+                                                        borderWidth: 0.5,
+                                                        borderStyle: 'solid',
+                                                        borderColor: 'black',
+                                                        marginTop: 10,
+                                                        flexDirection: 'row',
+                                                    }}
+                                                >
+                                                    <Image
+                                                        source={require('~/assets/images/movie-updating.png')}
+                                                        style={{ height: 20, width: 20, marginEnd: 10 }}
+                                                    />
+                                                    <Text>Hiện chưa có lịch chiếu</Text>
                                                 </View>
-                                            ))
-                                        ) : (
-                                            <View
-                                                style={{
-                                                    borderRadius: 4,
-                                                    padding: 8,
-                                                    borderWidth: 0.5,
-                                                    borderStyle: 'solid',
-                                                    borderColor: 'black',
-                                                    marginTop: 10,
-                                                    flexDirection: 'row',
-                                                }}
-                                            >
-                                                <Image
-                                                    source={require('~/assets/images/movie-updating.png')}
-                                                    style={{ height: 20, width: 20, marginEnd: 10 }}
-                                                />
-                                                <Text>Hiện chưa có lịch chiếu</Text>
-                                            </View>
-                                        )}
-                                    </View>
-                                </LinearGradient>
-                            ))}
+                                            )}
+                                        </View>
+                                    </LinearGradient>
+                                );
+                            })}
                         </View>
                     </View>
                 </View>

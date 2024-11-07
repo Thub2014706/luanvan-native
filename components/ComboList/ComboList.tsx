@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { Fragment, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { listCombo } from '~/services/ComboService';
 import { listFood } from '~/services/FoodService';
 import ComboItem from '~/components/ComboItem/ComboItem';
@@ -10,12 +10,8 @@ import { detailSeat } from '~/services/SeatService';
 import MiniComboPay from '~/components/MiniComboPay/MiniComboPay';
 import { transform } from '@babel/core';
 import BackIcon from '~/components/BackIcon/BackIcon';
-import { router, useFocusEffect } from 'expo-router';
-import { cartTicketComboValue } from '~/redux/cart/cartSlice';
-import { cancelAllHold } from '~/services/RedisService';
 
-const comboList = () => {
-    const user = useSelector((state) => state.auth.login.currentUser);
+const ComboList = () => {
     const listTicket = useSelector((state) => state.cart.cartTicket);
     const [combo, setCombo] = useState([]);
     const [selectCombo, setSelectCombo] = useState([]);
@@ -23,9 +19,6 @@ const comboList = () => {
     const [food, setFood] = useState([]);
     const [seats, setSeats] = useState([]);
     const [selectFood, setSelectFood] = useState([]);
-    const [time, setTime] = useState(180);
-    const dispatch = useDispatch();
-    const [price, setPrice] = useState(0);
 
     useEffect(() => {
         const fetch = async () => {
@@ -79,7 +72,6 @@ const comboList = () => {
             const foods = selectFood.filter((item) => item.quantity > 0);
             const data = [...combos, ...foods];
             setSelect(data);
-            setPrice(data.reduce((a, b) => a + b.price, 0));
             // dispatch(addCart({ combo: data, price: sum }));
         };
         fetch();
@@ -113,64 +105,14 @@ const comboList = () => {
 
         setSelectFood((pre) => pre.map((item) => (item === value ? { ...item, quantity: 0 } : item)));
     };
-    // console.log(listTicket);
 
-    useEffect(() => {
-        let interval;
-        const startTime = Date.now();
-        const startCountdown = () => {
-            interval = setInterval(() => {
-                const timePassed = Math.floor((Date.now() - startTime) / 1000);
-                setTime((time) => {
-                    if (time === 0) {
-                        clearInterval(interval);
-                        router.back();
-                        setSelect([]);
-                        return 0;
-                    } else return 180 - timePassed;
-                });
-            }, 1000);
-        };
-        startCountdown();
-
-        return () => {
-            if (interval) {
-                clearInterval(interval);
-            }
-        };
-    }, []);
-
-    const handleNext = () => {
-        dispatch(
-            cartTicketComboValue({
-                combos: select.map(({ variants, ...rest }) => rest),
-                price: listTicket.price + price,
-            }),
-        );
-        router.replace('/payTicket');
-    };
+    const handleNext = () => {};
 
     return (
         <Fragment>
-            <BackIcon
-                action={
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            flex: 1,
-                        }}
-                    >
-                        <Text style={{ fontSize: 18, fontWeight: '500', marginStart: 10 }}>Combo</Text>
-                        <View style={styles.time}>
-                            <Text style={{ fontSize: 16, fontWeight: '500', color: '#663399' }}>
-                                {`${Math.floor(time / 60)}`.padStart(2, 0)} : {`${time % 60}`.padStart(2, 0)}
-                            </Text>
-                        </View>
-                    </View>
-                }
-            />
+            <BackIcon action={
+                <Text  style={{ fontSize: 18, fontWeight: '500', marginStart: 10 }} numberOfLines={1} ellipsizeMode="tail"></Text>
+            } />
             <ScrollView>
                 <View style={styles.container}>
                     <View style={styles.titleContant}>
@@ -210,20 +152,18 @@ const comboList = () => {
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 'auto' }}>
                         <View style={{ flexDirection: 'row', gap: 10 }}>
                             {select.map((item, i) => {
-                                return (
-                                    <MiniComboPay key={i} item={item} handleCloseItem={() => handleCloseItem(item)} />
-                                );
+                                return <MiniComboPay key={i} item={item} handleCloseItem={() => handleCloseItem(item)} />;
                             })}
                         </View>
                     </ScrollView>
                 </View>
-                <PayContainer selectSeat={seats} priceSeat={listTicket.price + price} handleNext={handleNext} />
+                <PayContainer selectSeat={seats} priceSeat={listTicket.price} handleNext={handleNext} />
             </View>
         </Fragment>
     );
 };
 
-export default React.memo(comboList);
+export default React.memo(ComboList);
 
 const styles = StyleSheet.create({
     container: {
@@ -247,13 +187,5 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingHorizontal: 10,
         paddingTop: 10,
-    },
-    time: {
-        borderWidth: 1,
-        borderStyle: 'solid',
-        borderColor: '#663399',
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        borderRadius: 3,
     },
 });

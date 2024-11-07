@@ -3,13 +3,13 @@ import React, { useEffect } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router, useNavigation } from 'expo-router';
 
-const BackIcon = () => {
+const BackIcon = ({ action }) => {
     // const navigation = useNavigation();
 
     // useEffect(() => {
     //     const backAction = () => {
-    //         navigation.goBack(); 
-    //         return true; 
+    //         navigation.goBack();
+    //         return true;
     //     };
 
     //     const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
@@ -22,9 +22,14 @@ const BackIcon = () => {
     };
 
     return (
-        <TouchableOpacity onPress={handleBackPress} style={styles.container}>
-            <Ionicons name="arrow-back" size={32} color="gray" />
-        </TouchableOpacity>
+        <View style={styles.container}>
+            <Ionicons name="arrow-back" size={32} onPress={handleBackPress} color="gray" />
+            {/* <Text style={{ fontSize: 18, fontWeight: '500', marginStart: 10 }} numberOfLines={1} ellipsizeMode="tail">
+                {item}
+            </Text> */}
+            {action}
+            {/* <View>{action}</View> */}
+        </View>
     );
 };
 
@@ -34,9 +39,11 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
         // position: 'absolute',
-        width: '100%',
+        // width: '100%',
         padding: 10,
         // height: 52,
         zIndex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
 });

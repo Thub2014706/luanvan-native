@@ -22,8 +22,8 @@ const ComboItem = ({ item, value, handleMinus, handleAdd }) => {
             }
         };
         fetch();
-    }, [item]);
-    console.log(item);
+    }, [item, value]);
+    // console.log(item);
 
     return (
         data && (
@@ -36,10 +36,14 @@ const ComboItem = ({ item, value, handleMinus, handleAdd }) => {
                         <View style={{ flexWrap: 'wrap', flexDirection: 'row' }}>
                             {data.variants &&
                                 data.variants.map((food, index) => (
-                                    <Text style={{ fontWeight: '300' }}>
-                                        {food.quantity} {food.name}
-                                        {index < data.variants.length - 1 && ' + '}
-                                    </Text>
+                                    <React.Fragment>
+                                        <Text style={{ fontWeight: '300' }}>
+                                            {food.quantity} {food.name}
+                                        </Text>
+                                        {index < data.variants.length - 1 && (
+                                            <Text style={{ fontWeight: '300' }}> + </Text>
+                                        )}
+                                    </React.Fragment>
                                 ))}
                         </View>
                         <Text style={{ fontWeight: '500', fontSize: 18, color: '#3a2a62', marginTop: 10 }}>
