@@ -12,9 +12,9 @@ import { transform } from '@babel/core';
 import BackIcon from '~/components/BackIcon/BackIcon';
 import { router, useFocusEffect } from 'expo-router';
 import { cartTicketComboValue } from '~/redux/cart/cartSlice';
-import { cancelAllHold } from '~/services/RedisService';
+import { cancelAllHold, cancelHold } from '~/services/RedisService';
 
-const comboList = () => {
+const ComboList = () => {
     const user = useSelector((state) => state.auth.login.currentUser);
     const listTicket = useSelector((state) => state.cart.cartTicket);
     const [combo, setCombo] = useState([]);
@@ -140,13 +140,14 @@ const comboList = () => {
         };
     }, []);
 
-    const handleNext = () => {
+    const handleNext = async () => {
         dispatch(
             cartTicketComboValue({
                 combos: select.map(({ variants, ...rest }) => rest),
                 price: listTicket.price + price,
             }),
         );
+        await cancelHold(listTicket.showTime, listTicket.seats);
         router.replace('/payTicket');
     };
 
@@ -205,25 +206,31 @@ const comboList = () => {
                     })}
                 </View>
             </ScrollView>
-            <View>
-                <View style={styles.selectContant}>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 'auto' }}>
-                        <View style={{ flexDirection: 'row', gap: 10 }}>
-                            {select.map((item, i) => {
-                                return (
-                                    <MiniComboPay key={i} item={item} handleCloseItem={() => handleCloseItem(item)} />
-                                );
-                            })}
-                        </View>
-                    </ScrollView>
-                </View>
+            <View style={styles.selectContant}>
+                {select.length > 0 && (
+                    <View style={{ marginBottom: 10 }}>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 'auto' }}>
+                            <View style={{ flexDirection: 'row', gap: 10 }}>
+                                {select.map((item, i) => {
+                                    return (
+                                        <MiniComboPay
+                                            key={i}
+                                            item={item}
+                                            handleCloseItem={() => handleCloseItem(item)}
+                                        />
+                                    );
+                                })}
+                            </View>
+                        </ScrollView>
+                    </View>
+                )}
                 <PayContainer selectSeat={seats} priceSeat={listTicket.price + price} handleNext={handleNext} />
             </View>
         </Fragment>
     );
 };
 
-export default React.memo(comboList);
+export default React.memo(ComboList);
 
 const styles = StyleSheet.create({
     container: {
@@ -240,7 +247,7 @@ const styles = StyleSheet.create({
         gap: 5,
     },
     selectContant: {
-        height: 160,
+        // minHeight: 160,
         // position: 'absolute',
         backgroundColor: '#f8f8f8',
         bottom: 0,

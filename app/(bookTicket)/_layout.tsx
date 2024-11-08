@@ -8,6 +8,7 @@ export default function HomeLayout() {
                 <Stack.Screen name="comboList" />
                 <Stack.Screen name="payTicket" />
                 <Stack.Screen name="discountList" />
+                <Stack.Screen name="checkout" />
             </Stack>
     );
 }

@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ScrollView, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import ImageBase from '~/components/ImageBase/ImageBase';
 import { detailInfomation } from '~/services/InformationService';
@@ -24,7 +24,7 @@ const Home = () => {
         const fetchFilm = async () => {
             const data = await listFilmBySchedule(statusShowTime[1]);
             // console.log('ss',data);
-            
+
             setFilms1(data);
         };
         fetchFilm();
@@ -38,14 +38,14 @@ const Home = () => {
         return <Text>Loading...</Text>;
     }
     // console.log(films1);
-    
 
     return (
         <ScrollView>
             <View style={styles.headerLogo}>
                 <ImageBase
                     pathImg={info.image}
-                    style={{ width: 'auto', height: 35, contentFit: 'contain', flex: 1, alignItems: 'center' }}
+                    style={{ width: 'auto', height: 35, flex: 1, alignItems: 'center' }}
+                    resizeMode="contain"
                 />
                 <TextInput
                     style={styles.input}

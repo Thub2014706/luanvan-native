@@ -6,10 +6,15 @@ import { Ionicons } from '@expo/vector-icons';
 import BackIcon from '~/components/BackIcon/BackIcon';
 import * as Progress from 'react-native-progress';
 import { WIDTH } from '~/constants';
+import { router } from 'expo-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { discountValue } from '~/redux/cart/cartSlice';
 
-const discountList = ({ selectDis, setSelectDis }) => {
+const DiscountList = () => {
+    const selectDis = useSelector((state) => state.cart.discount);
     const [discounts, setDiscounts] = useState([]);
-    const [select, setSelect] = useState(selectDis)
+    const [select, setSelect] = useState(selectDis);
+    const dispatch = useDispatch()
 
     useEffect(() => {
         const fetch = async () => {
@@ -20,8 +25,13 @@ const discountList = ({ selectDis, setSelectDis }) => {
     }, []);
 
     const handleSelect = (id) => {
-        selectDis === id ? setSelect(null) : setSelect(id);
+        select === id ? setSelect(null) : setSelect(id);
     };
+
+    const handleApply = () => {
+        dispatch(discountValue({discount: select}))
+        router.back()
+    }
 
     return (
         <React.Fragment>
@@ -43,13 +53,13 @@ const discountList = ({ selectDis, setSelectDis }) => {
                             <View style={styles.disContant}>
                                 <View
                                     style={{
-                                        width: '25%',
+                                        width: '30%',
                                         justifyContent: 'center',
                                         alignItems: 'center',
                                         backgroundColor: '#d5bcfc',
                                     }}
                                 >
-                                    <Text style={{ fontWeight: '500', fontSize: 20 }}>{item.name}</Text>
+                                    <Text style={{ fontWeight: '500', fontSize: 20, padding: 10 }}>{item.name}</Text>
                                 </View>
                                 <View
                                     style={{
@@ -66,7 +76,7 @@ const discountList = ({ selectDis, setSelectDis }) => {
                                         <Text style={{ fontWeight: '300', marginBottom: 5 }}>Mã: {item.code}</Text>
                                         <Progress.Bar
                                             progress={item.used / item.quantity}
-                                            width={WIDTH - 20 - (25 / 100) * (WIDTH - 20) - 70}
+                                            width={WIDTH - 20 - (30 / 100) * (WIDTH - 20) - 70}
                                             color="#3a2a62"
                                             height={5}
                                             unfilledColor="#d2d2d2"
@@ -103,9 +113,9 @@ const discountList = ({ selectDis, setSelectDis }) => {
                 </View>
             </ScrollView>
             <View style={styles.buttonContant}>
-                <TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={handleApply}>
                     <View style={styles.button}>
-                        <Text style={{ color: 'white' }}>Đồng ý</Text>
+                        <Text style={{ color: 'white', fontSize: 16 }}>Áp dụng</Text>
                     </View>
                 </TouchableWithoutFeedback>
             </View>
@@ -113,7 +123,7 @@ const discountList = ({ selectDis, setSelectDis }) => {
     );
 };
 
-export default React.memo(discountList);
+export default React.memo(DiscountList);
 
 const styles = StyleSheet.create({
     container: {
@@ -139,5 +149,6 @@ const styles = StyleSheet.create({
     buttonContant: {
         bottom: 0,
         backgroundColor: 'white',
+        padding: 10,
     },
 });

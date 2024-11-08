@@ -25,7 +25,7 @@ const PayContainer = ({selectSeat, priceSeat, handleNext}) => {
                     <Text style={{ color: '#3a2a62', fontWeight: '500' }}>{priceSeat.toLocaleString('it-IT')} VNĐ</Text>
                 </View>
             </View>
-            <View style={{ margin: 10 }}>
+            <View style={{ margin: 10, marginEnd: 0 }}>
                 <TouchableWithoutFeedback onPress={handleNext}>
                     <View style={styles.button}>
                         <Text style={{ color: 'white' }}>Tiếp theo</Text>
@@ -46,10 +46,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         elevation: 5,
         padding: 10,
-        position: 'absolute',
+        // position: 'absolute',
         bottom: 0,
-        width: WIDTH - 20,
-        marginHorizontal: 10,
+        // width: WIDTH - 20,
+        // marginHorizontal: 10,
         borderRadius: 5,
         flexDirection: 'row',
         justifyContent: 'space-between',

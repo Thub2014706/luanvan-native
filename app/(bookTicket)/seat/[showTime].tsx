@@ -18,6 +18,7 @@ import { Image } from 'expo-image';
 import { useDispatch, useSelector } from 'react-redux';
 import { cartTicketValue, clearAllTicket } from '~/redux/cart/cartSlice';
 import PayContainer from '~/components/PayContainer/PayContainer';
+import { detailUserById } from '~/services/UserService';
 
 const Seat = () => {
     const user = useSelector((state) => state.auth.login.currentUser);
@@ -325,6 +326,7 @@ const Seat = () => {
                             </View>
                         </View>
 
+                        {/* man hinh */}
                         <View style={{ position: 'relative', marginTop: 20 }}>
                             <Image
                                 source={require('~/assets/images/screen.svg')}
@@ -344,6 +346,8 @@ const Seat = () => {
                                 MÀN HÌNH
                             </Text>
                         </View>
+
+                        {/* table */}
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 'auto' }}>
                             <View style={styles.table}>
                                 {rows.map((row) => {
@@ -415,6 +419,8 @@ const Seat = () => {
                                 })}
                             </View>
                         </ScrollView>
+
+                        {/* chi tiet ghe */}
                         <View
                             style={{
                                 marginTop: 20,
@@ -464,7 +470,9 @@ const Seat = () => {
                     </View>
                 </View>
             </ScrollView>
-            <PayContainer selectSeat={selectSeat} priceSeat={priceSeat} handleNext={handleNext} />
+            <View style={styles.nextContant}>
+                <PayContainer selectSeat={selectSeat} priceSeat={priceSeat} handleNext={handleNext} />
+            </View>
         </React.Fragment>
     ) : (
         <Text>Loading...</Text>
@@ -475,12 +483,9 @@ export default Seat;
 
 const styles = StyleSheet.create({
     container: {
-        // justifyContent: 'flex-start',
-        // alignItems: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
         padding: 10,
-        // flex: 1,
-        // justifyContent: 'flex-start',
-        height: HEIGHT - 20,
     },
     row: {
         flexDirection: 'row',
@@ -530,12 +535,25 @@ const styles = StyleSheet.create({
     containerInfo: {
         width: WIDTH - 20,
         // borderRadius: 10,
+        borderRadius: 10,
         flexDirection: 'row',
+        shadowOffset: { width: -2, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        backgroundColor: 'white',
+        elevation: 5,
     },
     contentMain: {
         paddingVertical: 5,
         paddingHorizontal: 10,
         width: WIDTH - 120,
-        // flex: 2,
+        // flex: 1,
+    },
+    nextContant: {
+        backgroundColor: '#f8f8f8',
+        bottom: 0,
+        width: '100%',
+        paddingHorizontal: 10,
+        paddingTop: 10,
     },
 });
