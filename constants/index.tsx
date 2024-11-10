@@ -3,6 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Dimensions } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { io } from 'socket.io-client';
+import { useSelector } from 'react-redux';
 
 export const WIDTH = Dimensions.get('window').width;
 export const HEIGHT = Dimensions.get('window').height;
@@ -126,8 +128,12 @@ export const responsive = {
 
 export const icon = {
     index: (props: any) => <Ionicons name="home" size={24} {...props} />,
+    chat: (props: any) => <Ionicons name="chatbox" size={24} {...props} />,
     account: (props: any) => <Ionicons name="person" size={24} {...props} />,
 };
 
-// export const Tab = createBottomTabNavigator();
-// export const Stack = createNativeStackNavigator();
+// const user = useSelector((state) => state.auth.login.currentUser);
+
+// export const socket = io(process.env.EXPO_PUBLIC_API_URL, {
+//     query: { userId: user.data.id },
+// });

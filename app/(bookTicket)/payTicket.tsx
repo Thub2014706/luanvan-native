@@ -1,4 +1,14 @@
-import { Alert, Linking, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import {
+    Alert,
+    Linking,
+    ScrollView,
+    StyleSheet,
+    Switch,
+    Text,
+    TextInput,
+    TouchableWithoutFeedback,
+    View,
+} from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BackIcon from '~/components/BackIcon/BackIcon';
@@ -19,9 +29,9 @@ import { detailDiscount } from '~/services/DiscountService';
 import { clearAllTicket, discountValue, removeDiscount } from '~/redux/cart/cartSlice';
 import Toast from 'react-native-toast-message';
 import { detailUserById } from '~/services/UserService';
-import { holdPay } from '~/services/RedisService';
+import { cancelHold, holdPay } from '~/services/RedisService';
 import { addOrderTicket } from '~/services/OrderTicketService';
-import { momoPaymentTicket } from '~/services/MomoService';
+import { checkStatus, momoPaymentTicket } from '~/services/MomoService';
 import { WebView } from 'react-native-webview';
 
 const PayTicket = () => {
@@ -38,12 +48,13 @@ const PayTicket = () => {
     const dispatch = useDispatch();
     const [isComingBack, setIsComingBack] = useState(false);
     const [point, setPoint] = useState(0);
-    const timeoutRef = useRef(null);
+    // const timeoutRef = useRef(null);
     const [time, setTime] = useState(180);
     const [timePay, setTimePay] = useState(180);
     const [maxPoint, setMaxPoint] = useState();
     const [switchPoint, setSwitchPoint] = useState(false);
     const [flag, setFlag] = useState(false);
+    const [orderId, setOrderId] = useState(null);
 
     useEffect(() => {
         const fetch = async () => {
@@ -144,7 +155,7 @@ const PayTicket = () => {
         };
         fetch();
     }, [listTicket.price, detailDis, point]);
-    // console.log(maxPoint);
+    // console.log(orderId);
 
     const handleSwitch = () => {
         if (switchPoint) {
@@ -193,31 +204,81 @@ const PayTicket = () => {
         let interval;
         let startTime = Date.now();
         const startCountdown = () => {
-            interval = setInterval(() => {
+            interval = setInterval(async () => {
                 const timePassed = Math.floor((Date.now() - startTime) / 1000);
                 const remainingTime = timePay - timePassed;
 
-                if (remainingTime <= 0 && !flag) {
+                if (orderId !== null && !flag) {
                     setFlag(true);
                     clearInterval(interval);
-                    setTime(0);
-                    Alert.alert(
-                        'Thông báo',
-                        'Đã quá thời gian thực hiện giao dịch của bạn. Vui lòng thực hiện giao dịch mới!',
-                        [
+                    const check = await checkStatus({ orderId });
+                    // console.log(check);
+
+                    if (check.resultCode === 0) {
+                        Alert.alert('Thông báo', 'Giao dịch thành công. Đến trang lịch sử để xem lại giao dịch nhé!', [
                             {
-                                text: 'Đóng',
-                                onPress: () => {
+                                text: 'Đồng ý',
+                                onPress: async () => {
                                     dispatch(clearAllTicket());
                                     router.navigate('/');
+                                    await cancelHold(listTicket.showTime, listTicket.seats);
                                     setFlag(true);
                                 },
                             },
-                        ],
-                    );
-                    console.log(time);
-                } else if (remainingTime > 0) {
-                    setTime(timePay - timePassed);
+                        ]);
+                    } else if (check.resultCode === 1000) {
+                        Alert.alert('Thông báo', 'Bạn đang trong quá trình giao dịch, hãy tiếp tục thanh toán!', [
+                            {
+                                text: 'Đồng ý',
+                                onPress: () => {
+                                    // if (url) {
+                                        // Linking.openURL(url);
+                                    // }
+                                    // dispatch(clearAllTicket());
+                                    // router.navigate('/');
+                                    setFlag(true);
+                                    // interval = setInterval(startCountdown, 3000);
+                                },
+                            },
+                        ]);
+                    } else if (check.resultCode !== 0 && check.resultCode !== 1000) {
+                        Alert.alert('Thông báo', 'Giao dịch thất bại. Vui lòng thực hiện giao dịch mới!', [
+                            {
+                                text: 'Đóng',
+                                onPress: async () => {
+                                    await cancelHold(listTicket.showTime, listTicket.seats);
+                                    setFlag(true);
+                                    dispatch(clearAllTicket());
+                                    router.navigate('/');
+                                },
+                            },
+                        ]);
+                    } else {
+                        interval = setInterval(startCountdown, 3000);
+                    }
+                } else {
+                    if (remainingTime <= 0 && !flag) {
+                        setFlag(true);
+                        clearInterval(interval);
+                        setTime(0);
+                        Alert.alert(
+                            'Thông báo',
+                            'Đã quá thời gian thực hiện giao dịch của bạn. Vui lòng thực hiện giao dịch mới!',
+                            [
+                                {
+                                    text: 'Đóng',
+                                    onPress: () => {
+                                        dispatch(clearAllTicket());
+                                        router.navigate('/');
+                                        setFlag(true);
+                                    },
+                                },
+                            ],
+                        );
+                        // console.log(time);
+                    } else if (remainingTime > 0) {
+                        setTime(timePay - timePassed);
+                    }
                 }
             }, 1000);
         };
@@ -228,7 +289,41 @@ const PayTicket = () => {
                 clearInterval(interval);
             }
         };
-    }, [timePay]);
+    }, [timePay, flag, dispatch, orderId]);
+
+    // useEffect(() => {
+    //     const fetch = async () => {
+    //         if (orderId !== null) {
+    //             const check = await checkStatus({ orderId });
+    //             console.log(check);
+
+    //             if (check.resultCode === 0) {
+    //                 Alert.alert('Thông báo', 'Giao dịch thành công. Đến trang lịch sử để xem lại giao dịch nhé!', [
+    //                     {
+    //                         text: 'Đồng ý',
+    //                         onPress: () => {
+    //                             dispatch(clearAllTicket());
+    //                             router.navigate('/');
+    //                             setFlag(true);
+    //                         },
+    //                     },
+    //                 ]);
+    //             } else {
+    //                 Alert.alert('Thông báo', 'Giao dịch thất bại. Vui lòng thực hiện giao dịch mới!', [
+    //                     {
+    //                         text: 'Đóng',
+    //                         onPress: () => {
+    //                             dispatch(clearAllTicket());
+    //                             router.navigate('/');
+    //                             setFlag(true);
+    //                         },
+    //                     },
+    //                 ]);
+    //             }
+    //         }
+    //     };
+    //     fetch();
+    // }, [dispatch, orderId]);
 
     const alert = (text) => {
         Alert.alert('Thông báo', text, [
@@ -241,7 +336,6 @@ const PayTicket = () => {
         ]);
     };
     // console.log((listTicket.price - point) * (listTicket.percent / 100));
-    
 
     const handlePay = async () => {
         if (point < 20000 && point > 0) {
@@ -257,7 +351,6 @@ const PayTicket = () => {
             let dis;
             if (detailDis !== null) {
                 dis = { id: discount, useDiscount: (listTicket.price - point) * (detailDis.percent / 100) };
-                
             }
 
             await addOrderTicket(
@@ -274,11 +367,11 @@ const PayTicket = () => {
                 },
                 user?.accessToken,
             );
-            Linking.openURL(data.payUrl)
+            setOrderId(data.orderId);
+            Linking.openURL(data.payUrl);
             // window.location.href = data.payUrl;
         }
     };
-    // console.log(typeof point);
 
     return (
         showTime && (
@@ -575,7 +668,7 @@ const PayTicket = () => {
                     </View>
                 </ScrollView>
                 <View style={styles.buttonContant}>
-                    <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end', paddingVertical: 10 }}>
+                    <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end', paddingBottom: 10 }}>
                         <Text style={{ fontWeight: '500' }}>
                             Tổng thanh toán:{' '}
                             <Text style={{ color: '#663399', fontSize: 18 }}>{price.toLocaleString('it-IT')} VNĐ</Text>

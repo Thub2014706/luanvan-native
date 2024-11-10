@@ -141,12 +141,22 @@ const account = () => {
                     <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
                         <View style={styles.line}></View>
                     </View>
-
-                    {/* <View style={{ marginTop: 20 }}>
-                        <Button title="Đăng xuất" color="#3a2a62" onPress={handleLogout} />
-                    </View> */}
+                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <Link href={'/(history)/history'}>
+                            <View>
+                                <Text style={{ color: '#3a2a62', fontSize: 16, marginTop: 20 }}>
+                                    Lịch sử giao dịch
+                                </Text>
+                            </View>
+                        </Link>
+                    </View>
+                    <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+                        <View style={styles.line}></View>
+                    </View>
                     <TouchableWithoutFeedback onPress={handleLogout}>
-                        <Text style={{ color: '#3a2a62', fontSize: 16, textAlign: 'center', marginTop: 20 }}>Đăng xuất</Text>
+                        <Text style={{ color: '#3a2a62', fontSize: 16, textAlign: 'center', marginTop: 20 }}>
+                            Đăng xuất
+                        </Text>
                     </TouchableWithoutFeedback>
                 </>
             )}

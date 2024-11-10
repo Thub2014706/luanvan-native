@@ -1,18 +1,54 @@
 import { View, Text, TextInput, StyleSheet, ScrollView, Image } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import ImageBase from '~/components/ImageBase/ImageBase';
 import { detailInfomation } from '~/services/InformationService';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { listFilmBySchedule } from '~/services/FilmService';
 import { HEIGHT, statusShowTime } from '~/constants';
 import SlideImage from '~/components/SlideImage/SlideImage';
 import UpcomingFilm from '~/components/UpcomingFilm/UpcomingFilm';
+import { io } from 'socket.io-client';
+import { setNumberChat, setSocketConnection } from '~/redux/socket/socketSlide';
+import { SocketContext } from '../SocketContext';
 
 const Home = () => {
+    const user = useSelector((state) => state.auth.login.currentUser);
     const [search, setSearch] = useState('');
     const [info, setInfo] = useState(null);
     const dispatch = useDispatch();
     const [films1, setFilms1] = useState([]);
+    const socket = useContext(SocketContext);
+    
+    useEffect(() => {
+        if (user && socket) {
+            // const socket = io(process.env.EXPO_PUBLIC_API_URL, {
+            //     query: { userId: user.data.id },
+            // });
+            
+            // console.log('aaaaaaaa', socket);
+            
+            socket.emit('number', user.data.id);
+            socket.on('numberFirst', (num) => {
+                dispatch(setNumberChat(num));
+            });
+
+            socket.on('removeNumber', (num) => {
+                dispatch(setNumberChat(num));
+            });
+
+            socket.on('addNumber', (num) => {
+                dispatch(setNumberChat(num));
+            });
+            // dispatch(setSocketConnection(socket));
+            
+            return () => {
+                socket.off('numberFirst');
+                socket.off('removeNumber');
+                socket.off('addNumber');
+                // socket.disconnect()
+            };
+        }
+    }, [user, dispatch, socket]);
 
     useEffect(() => {
         const fetchInfo = async () => {
@@ -37,7 +73,6 @@ const Home = () => {
     if (!info) {
         return <Text>Loading...</Text>;
     }
-    // console.log(films1);
 
     return (
         <ScrollView>
