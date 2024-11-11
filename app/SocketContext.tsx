@@ -11,15 +11,17 @@ export const SocketProvider = ({ children }) => {
 
     useEffect(() => {
         // Kết nối với server
-        const socketInstance = io(process.env.EXPO_PUBLIC_API_URL, {
-            query: { userId: user.data.id },
-        });
-        setSocket(socketInstance);
+        if (user) {
+            const socketInstance = io(process.env.EXPO_PUBLIC_API_URL, {
+                query: { userId: user?.data.id },
+            });
+            setSocket(socketInstance);
 
-        // Dọn dẹp khi component unmount
-        return () => {
-            if (socketInstance) socketInstance.disconnect();
-        };
+            // Dọn dẹp khi component unmount
+            return () => {
+                if (socketInstance) socketInstance.disconnect();
+            };
+        }
     }, []);
 
     return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;

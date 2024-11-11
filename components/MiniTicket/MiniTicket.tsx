@@ -1,17 +1,30 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import { Alert, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { signAge, standardAge, WIDTH } from '~/constants';
 import moment from 'moment';
 import ImageBase from '../ImageBase/ImageBase';
 import { Link } from 'expo-router';
+import { ticketRefundByOrder } from '~/services/TicketRefundService';
 
-const MiniTicket = ({ item }) => {
+const MiniTicket = ({ item, handleRefund }) => {
+    const [refund, setRefund] = useState(null);
+
+    useEffect(() => {
+        const fetch = async () => {
+            const data = await ticketRefundByOrder(item.item._id);
+            if (data) {
+                setRefund(data);
+            }
+        };
+        fetch();
+    }, [item.item._id]);
+
     return (
         <View>
             <Text style={{ fontWeight: '500', fontSize: 16 }}>{item.item.idOrder}</Text>
             <View style={styles.mainContent}>
                 <ImageBase pathImg={item.film.image} style={{ width: 100, height: 150 }} />
-                <View style={{ paddingHorizontal: 10 }}>
+                <View style={{ paddingHorizontal: 10, justifyContent: 'space-between' }}>
                     <Text style={{ fontWeight: '500' }}>
                         {item.film.name} [{signAge[standardAge.findIndex((age) => age === item.film.age)]}]
                     </Text>
@@ -27,7 +40,7 @@ const MiniTicket = ({ item }) => {
                         Ghế:{' '}
                         {item.seats.map((mini, index) => {
                             return (
-                                <Text>
+                                <Text key={index}>
                                     {String.fromCharCode(64 + mini.row)}
                                     {mini.col}
                                     {index < item.seats.length - 1 && ', '}
@@ -41,7 +54,37 @@ const MiniTicket = ({ item }) => {
                             {item.item.price.toLocaleString('it-IT')} VNĐ
                         </Text>
                     </Text>
-                    <Link href={{ pathname: '/(history)/details/[id]', params: { id: item.item.idOrder } }}>Chi tiết</Link>
+                    <View style={{ flexDirection: 'row', gap: 5 }}>
+                        <Link
+                            href={{ pathname: '/(history)/details/[id]', params: { id: item.item.idOrder } }}
+                            style={{
+                                backgroundColor: '#3a2a62',
+                                borderRadius: 5,
+                                paddingHorizontal: 15,
+                                alignSelf: 'baseline',
+                                paddingVertical: 5,
+                            }}
+                        >
+                            <Text style={{ color: 'white' }}>Chi tiết</Text>
+                        </Link>
+                        {refund === null && (
+                            <View>
+                                <TouchableWithoutFeedback onPress={handleRefund}>
+                                    <View
+                                        style={{
+                                            backgroundColor: '#f3ea28',
+                                            borderRadius: 5,
+                                            paddingHorizontal: 15,
+                                            alignSelf: 'baseline',
+                                            paddingVertical: 5,
+                                        }}
+                                    >
+                                        <Text>Hoàn vé</Text>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                            </View>
+                        )}
+                    </View>
                 </View>
             </View>
             <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>

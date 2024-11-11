@@ -25,12 +25,12 @@ export const refreshToken = async () => {
 };
 
 export const login = async (user, dispatch) => {
-    console.log('wedwe', user);
+    // console.log('wedwe', user);
     dispatch(loginStart());
     try {
         const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/api/user/signin`, user);        
         dispatch(loginSuccess(response.data));
-        router.back();
+        return response.data
     } catch (error) {
         dispatch(loginFailed());
         if (error.response) {

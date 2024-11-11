@@ -220,7 +220,7 @@ const PayTicket = () => {
                                 text: 'Đồng ý',
                                 onPress: async () => {
                                     dispatch(clearAllTicket());
-                                    router.navigate('/');
+                                    router.navigate('/(history)/history');
                                     await cancelHold(listTicket.showTime, listTicket.seats);
                                     setFlag(true);
                                 },
@@ -232,7 +232,7 @@ const PayTicket = () => {
                                 text: 'Đồng ý',
                                 onPress: () => {
                                     // if (url) {
-                                        // Linking.openURL(url);
+                                    // Linking.openURL(url);
                                     // }
                                     // dispatch(clearAllTicket());
                                     // router.navigate('/');

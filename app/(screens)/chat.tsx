@@ -47,7 +47,7 @@ const Chat = () => {
     // }, [user, dispatch, socket]);
     // console.log(numberChat);
 
-    return (
+    return user ? (
         <View style={styles.container}>
             <Text style={{ width: '70%', textAlign: 'center' }}>
                 Chào bạn {user?.data.username}! Cảm ơn bạn đã quan tâm đến CineThu. Có gì thắc mắc hãy liên hệ với chúng
@@ -62,9 +62,22 @@ const Chat = () => {
                 <View style={styles.button}>
                     <Text style={{ color: 'white', fontSize: 16 }}>Chat ngay</Text>
                 </View>
-                {/* <View style={styles.number}>
-                    <Text style={{ color: 'white' }}>{number}</Text>
-                </View> */}
+            </Link>
+        </View>
+    ) : (
+        <View style={styles.container}>
+            <Text style={{ width: '70%', textAlign: 'center' }}>
+                Bạn vẫn chưa đăng nhập tài khoản. Hãy đăng nhập để có thể trò chuyện cùng CineThu!
+            </Text>
+            <Image
+                source={require('~/assets/images/login-form-img.png')}
+                style={{ height: HEIGHT / 2, width: WIDTH, resizeMode: 'contain' }}
+                resizeMethod="resize"
+            />
+            <Link href={{ pathname: '/(account)/login', params: { isLog: true } }}>
+                <View style={styles.button}>
+                    <Text style={{ color: 'white', fontSize: 16 }}>Đăng nhập ngay</Text>
+                </View>
             </Link>
         </View>
     );

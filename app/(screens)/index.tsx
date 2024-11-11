@@ -4,12 +4,15 @@ import ImageBase from '~/components/ImageBase/ImageBase';
 import { detailInfomation } from '~/services/InformationService';
 import { useDispatch, useSelector } from 'react-redux';
 import { listFilmBySchedule } from '~/services/FilmService';
-import { HEIGHT, statusShowTime } from '~/constants';
+import { HEIGHT, statusShowTime, WIDTH } from '~/constants';
 import SlideImage from '~/components/SlideImage/SlideImage';
 import UpcomingFilm from '~/components/UpcomingFilm/UpcomingFilm';
 import { io } from 'socket.io-client';
 import { setNumberChat, setSocketConnection } from '~/redux/socket/socketSlide';
 import { SocketContext } from '../SocketContext';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import { detailPopup } from '~/services/PopupService';
 
 const Home = () => {
     const user = useSelector((state) => state.auth.login.currentUser);
@@ -17,16 +20,12 @@ const Home = () => {
     const [info, setInfo] = useState(null);
     const dispatch = useDispatch();
     const [films1, setFilms1] = useState([]);
+    const [pop, setPop] = useState(null);
     const socket = useContext(SocketContext);
-    
+    const [showUp, setShowUp] = useState(true);
+
     useEffect(() => {
         if (user && socket) {
-            // const socket = io(process.env.EXPO_PUBLIC_API_URL, {
-            //     query: { userId: user.data.id },
-            // });
-            
-            // console.log('aaaaaaaa', socket);
-            
             socket.emit('number', user.data.id);
             socket.on('numberFirst', (num) => {
                 dispatch(setNumberChat(num));
@@ -40,7 +39,7 @@ const Home = () => {
                 dispatch(setNumberChat(num));
             });
             // dispatch(setSocketConnection(socket));
-            
+
             return () => {
                 socket.off('numberFirst');
                 socket.off('removeNumber');
@@ -49,6 +48,10 @@ const Home = () => {
             };
         }
     }, [user, dispatch, socket]);
+
+    const handleSearch = () => {
+        router.push({ pathname: '/(bookTicket)/search', params: { search } });
+    };
 
     useEffect(() => {
         const fetchInfo = async () => {
@@ -66,6 +69,16 @@ const Home = () => {
         fetchFilm();
     }, []);
 
+    useEffect(() => {
+        const fetch = async () => {
+            const data = await detailPopup();
+            if (data) {
+                setPop(data.image);
+            }
+        };
+        fetch();
+    }, []);
+
     const onChangeText = (e) => {
         setSearch(e);
     };
@@ -75,24 +88,54 @@ const Home = () => {
     }
 
     return (
-        <ScrollView>
-            <View style={styles.headerLogo}>
-                <ImageBase
-                    pathImg={info.image}
-                    style={{ width: 'auto', height: 35, flex: 1, alignItems: 'center' }}
-                    resizeMode="contain"
-                />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={onChangeText}
-                    value={search}
-                    placeholder="Tìm kiếm phim, rạp..."
-                    placeholderTextColor="#aaa"
-                />
-            </View>
-            <SlideImage />
-            {films1?.length > 0 && <UpcomingFilm films1={films1} />}
-        </ScrollView>
+        <React.Fragment>
+            <ScrollView>
+                <View style={styles.headerLogo}>
+                    <ImageBase
+                        pathImg={info.image}
+                        style={{ width: 'auto', height: 35, flex: 1, alignItems: 'center' }}
+                        resizeMode="contain"
+                    />
+                    <View style={styles.searchContant}>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={onChangeText}
+                            value={search}
+                            placeholder="Tìm kiếm phim, rạp..."
+                            placeholderTextColor="#aaa"
+                            enterKeyHint={'enter'}
+                        />
+                        <Ionicons name="search-outline" size={18} color="gray" onPress={handleSearch} />
+                    </View>
+                </View>
+                <SlideImage />
+                {films1?.length > 0 && <UpcomingFilm films1={films1} />}
+            </ScrollView>
+            {pop !== null && showUp && (
+                <View style={{ position: 'absolute', zIndex: 1000, transform: 'translate(-50%, 50%)', left: '50%' }}>
+                    <View>
+                        <ImageBase
+                            pathImg={pop}
+                            style={{
+                                width: WIDTH - 20,
+                                height: HEIGHT / 2,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                position: 'relative',
+                            }}
+                            resizeMode="contain"
+                        />
+                        <Ionicons
+                            name="close-circle-outline"
+                            size={24}
+                            color="white"
+                            style={{ position: 'absolute', transform: 'translate(-50%, 50%)', right: '35%' }}
+                            onPress={() => setShowUp(false)}
+                        />
+                    </View>
+                </View>
+            )}
+        </React.Fragment>
     );
 };
 
@@ -112,6 +155,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     input: {
+        color: 'white',
+        // position: 'relative',
+        flex: 1,
+    },
+    searchContant: {
         width: 100,
         margin: 12,
         borderWidth: 1,
@@ -119,6 +167,9 @@ const styles = StyleSheet.create({
         borderColor: '#aaa',
         borderRadius: 20,
         flex: 2,
-        color: 'white',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 5,
     },
 });

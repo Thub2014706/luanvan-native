@@ -1,10 +1,20 @@
-import { Appearance, Button, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+    Appearance,
+    Button,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { login, register } from '~/services/UserService';
 import { useDispatch, useSelector } from 'react-redux';
 import { WIDTH } from '~/constants';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import BackIcon from '~/components/BackIcon/BackIcon';
 
@@ -57,15 +67,17 @@ const Login = () => {
     };
     const user = useSelector((state) => state.auth.login.currentUser);
 
-
     const handleSubmit = async () => {
-        console.log('qwqw', user);
         if (isLogin) {
-            await login(data, dispatch)
+            const result = await login(data, dispatch);
+            console.log('qwqw', result);
+            if (result) {
+                router.back();
+            }
         } else {
             await register(data);
         }
-        
+
         // const result = isLogin ? await login(data, dispatch) : await register(data);
         // if (result) {
         //     setWar(result);
@@ -148,11 +160,13 @@ const Login = () => {
                             />
                         </View>
                     )}
-                    <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-                        <Text style={{ fontSize: 18, fontWeight: '500', color: 'white' }}>
-                            {isLogin ? 'Đăng nhập' : 'Đăng ký'}
-                        </Text>
-                    </TouchableOpacity>
+                    <TouchableWithoutFeedback onPress={handleSubmit}>
+                        <View style={styles.button}>
+                            <Text style={{ fontSize: 18, fontWeight: '500', color: 'white' }}>
+                                {isLogin ? 'Đăng nhập' : 'Đăng ký'}
+                            </Text>
+                        </View>
+                    </TouchableWithoutFeedback>
                     {war !== '' && (
                         <View style={{ alignSelf: 'flex-start', flexDirection: 'row', gap: 5, marginTop: 20 }}>
                             <Ionicons name="warning-outline" size={18} color="#3a2a62" />
