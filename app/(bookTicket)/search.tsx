@@ -1,109 +1,130 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { useLocalSearchParams } from 'expo-router';
-import { searchFilm } from '~/services/FilmService';
-import { lengthRoomByTheater, lengthSeatByTheater } from '~/services/TheaterService';
-import ImageBase from '~/components/ImageBase/ImageBase';
-import Age from '~/components/Age/Age';
-import { detailGenre } from '~/services/GenreService';
-import { WIDTH } from '~/constants';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import BackIcon from '~/components/BackIcon/BackIcon';
+import { Ionicons } from '@expo/vector-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { router } from 'expo-router';
+import { pushData, removeAllData, removeData } from '~/redux/search/search';
+import { HEIGHT } from '~/constants';
 
 const Search = () => {
-    const { search } = useLocalSearchParams<{ search: string }>();
-
-    const [theaters, setTheaters] = useState([]);
-    const [films, setFilms] = useState([]);
-    // console.log('aaaa',search);
+    const search = useSelector((state) => state.search.data);
+    const [searchs, setSearchs] = useState(search);
+    const [searchChange, setSearchChange] = useState('');
+    const dispatch = useDispatch();
+    const inputRef = useRef(null);
 
     useEffect(() => {
-        const fetch = async () => {
-            const data = await searchFilm(search);
-            const data1 = await Promise.all(
-                data.theaters.map(async (item) => {
-                    const lengthRoom = await lengthRoomByTheater(item._id);
-                    const lengthSeat = await lengthSeatByTheater(item._id);
-                    return { ...item, lengthRoom, lengthSeat };
-                }),
-            );
-            const data2 = await Promise.all(
-                data.films.map(async (item) => {
-                    const genre = await Promise.all(
-                        item.genre.map(async (mini) => {
-                            const genreDetail = await detailGenre(mini);
-                            return genreDetail.name;
-                        }),
-                    );
-                    return { ...item, genre };
-                }),
-            );
+        inputRef.current?.focus();
+    }, []);
 
-            setTheaters(data1);
-            setFilms(data2);
-        };
-        fetch();
-    }, [search]);
+    const handleSearch = () => {
+        router.push({ pathname: '/resultSearch', params: { search: searchChange } });
+        dispatch(pushData(searchChange));
+        setSearchs((pre) => [searchChange, ...pre.filter((mini) => mini !== searchChange)]);
+    };
+
+    const handleClose = (item) => {
+        dispatch(removeData(item));
+        setSearchs((pre) => pre.filter((mini) => item !== mini));
+    };
+
+    const handleCloseAll = () => {
+        dispatch(removeAllData());
+        setSearchs([]);
+    };
+
+    const handleSearchOld = (item) => {
+        router.push({ pathname: '/resultSearch', params: { search: item } });
+        dispatch(pushData(item));
+        setSearchs((pre) => [item, ...pre.filter((mini) => mini !== item)]);
+    };
 
     return (
-        <View>
-            {films.length === 0 && theaters.length === 0 && <Text>Không có kết quả tìm kiếm!</Text>}
-            {films.length > 0 && (
-                <React.Fragment>
-                    <Text>Kết quả tìm kiếm phim</Text>
-                    <View style={{ gap: 10, flexDirection: 'column' }}>
-                        {films.map((item) => {
-                            return (
-                                <View style={styles.filmContant}>
-                                    <ImageBase pathImg={item.image} style={{ width: 80, height: 130 }} />
-                                    <View style={{ padding: 10 }}>
-                                        <Text>{item.name}</Text>
-                                        <Text>Quốc gia: {item.nation}</Text>
-                                        <Text>Thời lượng: {item.time} phút</Text>
-                                        <View style={styles.inline}>
-                                            {item.genre.map((mini, index) => (
-                                                <Text key={index} style={styles.text}>
-                                                    {mini}
-                                                    {index < item.genre.length - 1 && ', '}
-                                                </Text>
-                                            ))}
-                                        </View>
-                                        <Age age={item.age} />
-                                    </View>
-                                </View>
-                            );
-                        })}
+        <React.Fragment>
+            <BackIcon
+                action={
+                    <View style={styles.searchContant}>
+                        <TextInput
+                            ref={inputRef}
+                            style={styles.input}
+                            onChangeText={(value) => setSearchChange(value)}
+                            value={searchChange}
+                            placeholder="Tìm kiếm phim, rạp..."
+                            placeholderTextColor="#aaa"
+                            enterKeyHint={'enter'}
+                        />
+                        <Ionicons name="search-outline" size={18} color="gray" onPress={handleSearch} />
                     </View>
-                </React.Fragment>
-            )}
-            {theaters.length > 0 && (
-                <React.Fragment>
-                    <Text>Kết quả tìm kiếm rạp</Text>
-                    <View style={{ gap: 10, flexDirection: 'column' }}>
-                        {theaters.map((item) => {
-                            return (
-                                <View style={styles.filmContant}>
-                                    <ImageBase pathImg={item.image} style={{ width: WIDTH - 20, height: 'auto' }} />
-                                    <View style={{ padding: 10 }}>
-                                        <Text>{item.name}</Text>
+                }
+            />
+            <ScrollView>
+                <View style={styles.container}>
+                    {searchs.map((item) => {
+                        return (
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <TouchableWithoutFeedback onPress={() => handleSearchOld(item)}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, flex: 1 }}>
+                                        <Ionicons name="time-sharp" size={18} color="gray" onPress={handleSearch} />
+                                        <Text key={item}>{item}</Text>
                                     </View>
-                                </View>
-                            );
-                        })}
-                    </View>
-                </React.Fragment>
-            )}
-        </View>
+                                </TouchableWithoutFeedback>
+                                <Ionicons
+                                    name="close-outline"
+                                    size={18}
+                                    color="gray"
+                                    onPress={() => handleClose(item)}
+                                />
+                            </View>
+                        );
+                    })}
+                    {searchs.length > 1 && (
+                        <TouchableWithoutFeedback onPress={() => handleCloseAll()}>
+                            <View style={{ alignSelf: 'center' }}>
+                                <Text style={{ color: 'gray', textAlign: 'center' }}>Xoá tất cả</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    )}
+                </View>
+            </ScrollView>
+        </React.Fragment>
     );
 };
 
-export default React.memo(Search);
+export default Search;
 
 const styles = StyleSheet.create({
-    filmContant: {
-        flexDirection: 'row',
-        borderRadius: 5,
+    input: {
+        color: 'black',
+        // position: 'relative',
+        flex: 1,
     },
-    inline: {
+    searchContant: {
+        width: 80,
+        // margin: 10,
+        borderWidth: 1,
+        paddingVertical: 5,
+        borderColor: '#aaa',
+        borderRadius: 20,
+        flex: 2,
         flexDirection: 'row',
-        marginBottom: 5,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 5,
+        paddingHorizontal: 10,
+        marginHorizontal: 20,
+    },
+    container: {
+        height: HEIGHT,
+        padding: 10,
+        backgroundColor: 'white',
+        flex: 1,
+        gap: 20,
     },
 });

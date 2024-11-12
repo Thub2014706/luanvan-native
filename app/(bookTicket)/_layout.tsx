@@ -4,6 +4,7 @@ export default function HomeLayout() {
     return (
             <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="search" />
+                <Stack.Screen name="resultSearch" />
                 <Stack.Screen name="details/[id]" />
                 <Stack.Screen name="seat/[showTime]" />
                 <Stack.Screen name="comboList" />

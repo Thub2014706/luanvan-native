@@ -1,7 +1,7 @@
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { HEIGHT, icon } from '~/constants';
-import { useSharedValue } from 'react-native-reanimated';
+import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useSelector } from 'react-redux';
 
 const TabBarButton = ({
@@ -20,18 +20,42 @@ const TabBarButton = ({
     label: string;
 }) => {
     const numberChat = useSelector((state) => state.socket.numberChat);
-    // const scale = useSharedValue(0);
+    const scale = useSharedValue(0);
     // console.log(icon[routeName]);
+    useEffect(() => {
+        scale.value = withSpring(typeof isFocused === 'boolean' ? (isFocused ? 1 : 0) : isFocused, { duration: 350 });
+    }, [scale, isFocused]);
+
+    const animatedTextStyle = useAnimatedStyle(() => {
+        const opacity = interpolate(scale.value, [0, 1], [1, 0]);
+        return { opacity };
+    });
+
+    const animatedIconStyle = useAnimatedStyle(() => {
+        const scaleValue = interpolate(scale.value, [0, 1], [1, 1.2]);
+        const top = interpolate(scale.value, [0, 1], [0, 9]);
+        return {
+            transform: [
+                {
+                    scale: scaleValue,
+                },
+            ],
+            top,
+        };
+    });
 
     return (
-        // <View>
-        <Pressable onPress={onPress} onLongPress={onLongPress} style={[styles.tabbarItem, isFocused && styles.select]}>
-            <View style={{ position: 'relative' }}>
-                {icon[routeName] &&
-                    icon[routeName]({
-                        color: isFocused ? 'white' : '#222',
-                    })}
-                <Text style={{ color: isFocused ? 'white' : '#222' }}>{label}</Text>
+        <Pressable onPress={onPress} onLongPress={onLongPress} style={[styles.tabbarItem]}>
+            <View style={{ position: 'relative', justifyContent: 'center', alignItems: 'center' }}>
+                <Animated.View style={animatedIconStyle}>
+                    {icon[routeName] &&
+                        icon[routeName]({
+                            color: isFocused ? '#fff' : '#222',
+                        })}
+                </Animated.View>
+                <Animated.Text style={[{ color: isFocused ? '#fff' : '#222' }, animatedTextStyle]}>
+                    {label}
+                </Animated.Text>
             </View>
             {routeName === 'chat' && numberChat > 0 && (
                 <View style={styles.number}>
@@ -39,7 +63,6 @@ const TabBarButton = ({
                 </View>
             )}
         </Pressable>
-        // </View>
     );
 };
 
@@ -51,13 +74,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         gap: 5,
-    },
-    select: {
-        backgroundColor: '#673ab7',
-        borderRadius: 50,
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     number: {
         width: 20,

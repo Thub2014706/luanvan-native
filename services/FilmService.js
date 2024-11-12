@@ -14,7 +14,7 @@ export const getImage = async (name) => {
         const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/api/film/image/${name}`);
         return response.config.url;
     } catch (error) {
-        console.error('loi', error);
+        console.error('loi anh', error);
     }
 };
 

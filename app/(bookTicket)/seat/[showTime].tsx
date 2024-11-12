@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { cartTicketValue, clearAllTicket } from '~/redux/cart/cartSlice';
 import PayContainer from '~/components/PayContainer/PayContainer';
 import { detailUserById } from '~/services/UserService';
+import Loading from '~/components/Loading/Loading';
 
 const Seat = () => {
     const user = useSelector((state) => state.auth.login.currentUser);
@@ -475,7 +476,7 @@ const Seat = () => {
             </View>
         </React.Fragment>
     ) : (
-        <Text>Loading...</Text>
+        <Loading />
     );
 };
 

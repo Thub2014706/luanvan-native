@@ -4,6 +4,7 @@ import cartReducer from '../cart/cartSlice';
 // import socketReducer from '~/features/socket/socketSlide';
 import informationReducer from '../information/informationSlide';
 import socketReducer from '../socket/socketSlide';
+import searchReducer from '../search/search';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -12,8 +13,8 @@ const persistConfig = {
     version: 1,
     storage: AsyncStorage,
     // whitelist: ['information', 'auth', 'socket', 'cart'],
-    whitelist: ['auth', 'cart', 'information'],
-    blacklist: ['socket'], 
+    whitelist: ['auth', 'cart', 'information', 'search'],
+    blacklist: ['socket'],
 };
 
 const rootReducer = combineReducers({
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
     cart: cartReducer,
     socket: socketReducer,
     information: informationReducer,
+    search: searchReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

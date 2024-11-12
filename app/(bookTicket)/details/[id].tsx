@@ -19,6 +19,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import BackIcon from '~/components/BackIcon/BackIcon';
 import { useSelector } from 'react-redux';
+import Loading from '~/components/Loading/Loading';
 
 const pickerStyle = {
     inputIOS: {
@@ -142,7 +143,7 @@ const DetailFilm = () => {
     };
 
     return film !== null ? (
-        <>
+        <React.Fragment>
             <BackIcon
                 action={
                     <Text
@@ -157,9 +158,10 @@ const DetailFilm = () => {
             <ScrollView>
                 <View style={styles.container}>
                     <View style={styles.containerInfo}>
-                        <ImageBase pathImg={film.data.image} style={{ width: 80, height: 130 }} />
+                        <ImageBase pathImg={film.data.image} style={{ width: 90, height: 140 }} />
                         <View style={styles.contentMain}>
                             <Text style={styles.title}>{film.data.name}</Text>
+                            <Text style={styles.text}>Quốc gia: {film.data.nation}</Text>
                             <Text style={styles.text}>Thời lượng: {film.data.time} phút</Text>
                             <View style={styles.inline}>
                                 {film.arrayGenre.map((item, index) => (
@@ -322,9 +324,9 @@ const DetailFilm = () => {
                     </View>
                 </View>
             </ScrollView>
-        </>
+        </React.Fragment>
     ) : (
-        <Text>Loading...</Text>
+        <Loading />
     );
 };
 

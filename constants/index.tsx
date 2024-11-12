@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 
 export const WIDTH = Dimensions.get('window').width;
 export const HEIGHT = Dimensions.get('window').height;
+export const SPACING = (WIDTH - WIDTH * 0.8) / 2;
 
 export const standardAge = [
     'P - Thích hợp cho mọi độ tuổi',

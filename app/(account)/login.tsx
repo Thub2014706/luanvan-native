@@ -12,7 +12,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { login, register } from '~/services/UserService';
 import { useDispatch, useSelector } from 'react-redux';
-import { WIDTH } from '~/constants';
+import { HEIGHT, WIDTH } from '~/constants';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import Toast from 'react-native-toast-message';
@@ -65,7 +65,6 @@ const Login = () => {
             [field]: value,
         }));
     };
-    const user = useSelector((state) => state.auth.login.currentUser);
 
     const handleSubmit = async () => {
         if (isLogin) {
@@ -85,97 +84,109 @@ const Login = () => {
     };
 
     return (
-        <>
+        <React.Fragment>
             <View style={{ zIndex: 999 }}>
                 <Toast topOffset={20} />
             </View>
-            <BackIcon />
+            <BackIcon
+                action={
+                    <Text
+                        style={{ fontSize: 18, fontWeight: '500', marginHorizontal: 10 }}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
+                        {isLogin ? 'Đăng nhập' : 'Đăng ký'}
+                    </Text>
+                }
+            />
             <ScrollView>
-                <View style={styles.container}>
-                    <Text style={{ fontSize: 20, fontWeight: '500' }}>{isLogin ? 'Đăng nhập' : 'Đăng ký'}</Text>
-                    {isLogin ? (
-                        <View>
-                            <TextInput
-                                style={styles.input}
-                                onChangeText={handleChange('info')}
-                                value={data.info}
-                                placeholder="Tài khoản, email hoặc số điện thoại"
-                                keyboardType="default"
-                                enterKeyHint="next"
-                                onSubmitEditing={() => passwordInput.focus()}
-                            />
-                            <TextInput
-                                ref={(input) => {
-                                    passwordInput = input;
-                                }}
-                                secureTextEntry={true}
-                                value={data.password}
-                                onChangeText={handleChange('password')}
-                                style={styles.input}
-                                placeholder="Mật khẩu"
-                                enterKeyHint="done"
-                            />
-                        </View>
-                    ) : (
-                        <View>
-                            <TextInput
-                                style={styles.input}
-                                onChangeText={handleChange('username')}
-                                value={data.username}
-                                placeholder="Tên đăng nhập"
-                                keyboardType="default"
-                                enterKeyHint="next"
-                            />
-                            <TextInput
-                                style={styles.input}
-                                onChangeText={handleChange('email')}
-                                value={data.email}
-                                placeholder="Email"
-                                keyboardType="email-address"
-                                enterKeyHint="next"
-                            />
-                            <TextInput
-                                style={styles.input}
-                                onChangeText={handleChange('phone')}
-                                value={data.phone}
-                                placeholder="Số điện thoại"
-                                keyboardType="name-phone-pad"
-                                enterKeyHint="next"
-                            />
-                            <TextInput
-                                secureTextEntry={true}
-                                value={data.password}
-                                onChangeText={handleChange('password')}
-                                style={styles.input}
-                                placeholder="Mật khẩu"
-                                enterKeyHint="next"
-                            />
-                            <TextInput
-                                secureTextEntry={true}
-                                value={data.confirmPassword}
-                                onChangeText={handleChange('confirmPassword')}
-                                style={styles.input}
-                                placeholder="Nhập lại mật khẩu"
-                                enterKeyHint="done"
-                            />
-                        </View>
-                    )}
-                    <TouchableWithoutFeedback onPress={handleSubmit}>
-                        <View style={styles.button}>
-                            <Text style={{ fontSize: 18, fontWeight: '500', color: 'white' }}>
-                                {isLogin ? 'Đăng nhập' : 'Đăng ký'}
-                            </Text>
-                        </View>
-                    </TouchableWithoutFeedback>
-                    {war !== '' && (
-                        <View style={{ alignSelf: 'flex-start', flexDirection: 'row', gap: 5, marginTop: 20 }}>
-                            <Ionicons name="warning-outline" size={18} color="#3a2a62" />
-                            <Text style={{ fontSize: 16 }}>{war}</Text>
-                        </View>
-                    )}
+                <View style={{ backgroundColor: 'white', height: HEIGHT }}>
+                    <View style={styles.container}>
+                        <Text style={{ fontSize: 20, fontWeight: '500' }}>{isLogin ? 'Đăng nhập' : 'Đăng ký'}</Text>
+                        {isLogin ? (
+                            <View>
+                                <TextInput
+                                    style={styles.input}
+                                    onChangeText={handleChange('info')}
+                                    value={data.info}
+                                    placeholder="Tài khoản, email hoặc số điện thoại"
+                                    keyboardType="default"
+                                    enterKeyHint="next"
+                                    onSubmitEditing={() => passwordInput.focus()}
+                                />
+                                <TextInput
+                                    ref={(input) => {
+                                        passwordInput = input;
+                                    }}
+                                    secureTextEntry={true}
+                                    value={data.password}
+                                    onChangeText={handleChange('password')}
+                                    style={styles.input}
+                                    placeholder="Mật khẩu"
+                                    enterKeyHint="done"
+                                />
+                            </View>
+                        ) : (
+                            <View>
+                                <TextInput
+                                    style={styles.input}
+                                    onChangeText={handleChange('username')}
+                                    value={data.username}
+                                    placeholder="Tên đăng nhập"
+                                    keyboardType="default"
+                                    enterKeyHint="next"
+                                />
+                                <TextInput
+                                    style={styles.input}
+                                    onChangeText={handleChange('email')}
+                                    value={data.email}
+                                    placeholder="Email"
+                                    keyboardType="email-address"
+                                    enterKeyHint="next"
+                                />
+                                <TextInput
+                                    style={styles.input}
+                                    onChangeText={handleChange('phone')}
+                                    value={data.phone}
+                                    placeholder="Số điện thoại"
+                                    keyboardType="name-phone-pad"
+                                    enterKeyHint="next"
+                                />
+                                <TextInput
+                                    secureTextEntry={true}
+                                    value={data.password}
+                                    onChangeText={handleChange('password')}
+                                    style={styles.input}
+                                    placeholder="Mật khẩu"
+                                    enterKeyHint="next"
+                                />
+                                <TextInput
+                                    secureTextEntry={true}
+                                    value={data.confirmPassword}
+                                    onChangeText={handleChange('confirmPassword')}
+                                    style={styles.input}
+                                    placeholder="Nhập lại mật khẩu"
+                                    enterKeyHint="done"
+                                />
+                            </View>
+                        )}
+                        <TouchableWithoutFeedback onPress={handleSubmit}>
+                            <View style={styles.button}>
+                                <Text style={{ fontSize: 18, fontWeight: '500', color: 'white' }}>
+                                    {isLogin ? 'Đăng nhập' : 'Đăng ký'}
+                                </Text>
+                            </View>
+                        </TouchableWithoutFeedback>
+                        {war !== '' && (
+                            <View style={{ alignSelf: 'flex-start', flexDirection: 'row', gap: 5, marginTop: 20 }}>
+                                <Ionicons name="warning-outline" size={18} color="#3a2a62" />
+                                <Text style={{ fontSize: 16 }}>{war}</Text>
+                            </View>
+                        )}
+                    </View>
                 </View>
             </ScrollView>
-        </>
+        </React.Fragment>
     );
 };
 

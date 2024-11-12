@@ -18,7 +18,8 @@ const ImageBase = ({ pathImg, style, blurRadius, resizeMode }) => {
     return img !== null ? (
         <Image source={{ uri: img }} style={style} resizeMode={resizeMode} blurRadius={blurRadius} />
     ) : (
-        <Text>Loading...</Text>
+        <View style={[style, {backgroundColor: '#e1e1e1'}]}></View>
+        // <Text>Loading...</Text>
     );
 };
 

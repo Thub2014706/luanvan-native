@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ScrollView, Image, TouchableWithoutFeedback } from 'react-native';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import ImageBase from '~/components/ImageBase/ImageBase';
 import { detailInfomation } from '~/services/InformationService';
@@ -13,6 +13,8 @@ import { SocketContext } from '../SocketContext';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { detailPopup } from '~/services/PopupService';
+import Carousel from '~/components/Carousel/Carousel';
+import { detailGenre } from '~/services/GenreService';
 
 const Home = () => {
     const user = useSelector((state) => state.auth.login.currentUser);
@@ -20,9 +22,7 @@ const Home = () => {
     const [info, setInfo] = useState(null);
     const dispatch = useDispatch();
     const [films1, setFilms1] = useState([]);
-    const [pop, setPop] = useState(null);
     const socket = useContext(SocketContext);
-    const [showUp, setShowUp] = useState(true);
 
     useEffect(() => {
         if (user && socket) {
@@ -50,7 +50,7 @@ const Home = () => {
     }, [user, dispatch, socket]);
 
     const handleSearch = () => {
-        router.push({ pathname: '/(bookTicket)/search', params: { search } });
+        router.push({ pathname: '/(bookTicket)/search' });
     };
 
     useEffect(() => {
@@ -62,26 +62,22 @@ const Home = () => {
 
         const fetchFilm = async () => {
             const data = await listFilmBySchedule(statusShowTime[1]);
-            // console.log('ss',data);
-
-            setFilms1(data);
+            const dataResult = await Promise.all(
+                data.map(async (item) => {
+                    const genre = await Promise.all(
+                        item.genre.map(async (mini) => {
+                            const genreDetail = await detailGenre(mini);
+                            return genreDetail.name;
+                        }),
+                    );
+                    return { ...item, genre };
+                }),
+            );
+            setFilms1(dataResult);
         };
         fetchFilm();
     }, []);
-
-    useEffect(() => {
-        const fetch = async () => {
-            const data = await detailPopup();
-            if (data) {
-                setPop(data.image);
-            }
-        };
-        fetch();
-    }, []);
-
-    const onChangeText = (e) => {
-        setSearch(e);
-    };
+    console.log(films1);
 
     if (!info) {
         return <Text>Loading...</Text>;
@@ -90,51 +86,25 @@ const Home = () => {
     return (
         <React.Fragment>
             <ScrollView>
-                <View style={styles.headerLogo}>
-                    <ImageBase
-                        pathImg={info.image}
-                        style={{ width: 'auto', height: 35, flex: 1, alignItems: 'center' }}
-                        resizeMode="contain"
-                    />
-                    <View style={styles.searchContant}>
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={onChangeText}
-                            value={search}
-                            placeholder="Tìm kiếm phim, rạp..."
-                            placeholderTextColor="#aaa"
-                            enterKeyHint={'enter'}
-                        />
-                        <Ionicons name="search-outline" size={18} color="gray" onPress={handleSearch} />
-                    </View>
-                </View>
-                <SlideImage />
-                {films1?.length > 0 && <UpcomingFilm films1={films1} />}
-            </ScrollView>
-            {pop !== null && showUp && (
-                <View style={{ position: 'absolute', zIndex: 1000, transform: 'translate(-50%, 50%)', left: '50%' }}>
-                    <View>
+                <View style={styles.container}>
+                    <View style={styles.headerLogo}>
                         <ImageBase
-                            pathImg={pop}
-                            style={{
-                                width: WIDTH - 20,
-                                height: HEIGHT / 2,
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                position: 'relative',
-                            }}
+                            pathImg={info.image}
+                            style={{ width: 'auto', height: 35, flex: 1, alignItems: 'center' }}
                             resizeMode="contain"
                         />
-                        <Ionicons
-                            name="close-circle-outline"
-                            size={24}
-                            color="white"
-                            style={{ position: 'absolute', transform: 'translate(-50%, 50%)', right: '35%' }}
-                            onPress={() => setShowUp(false)}
-                        />
+                        <TouchableWithoutFeedback onPress={handleSearch}>
+                            <View style={styles.searchContant}>
+                                <Text style={{ color: '#aaa' }}>Tìm kiếm phim, rạp...</Text>
+                                <Ionicons name="search-outline" size={18} color="gray" />
+                            </View>
+                        </TouchableWithoutFeedback>
                     </View>
+                    <SlideImage />
+                    {/* {films1?.length > 0 && <UpcomingFilm films1={films1} />} */}
+                    {films1?.length > 0 && <Carousel data={films1} />}
                 </View>
-            )}
+            </ScrollView>
         </React.Fragment>
     );
 };
@@ -146,7 +116,8 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'powderblue',
+        backgroundColor: '#3a2a62',
+        height: HEIGHT + 200,
     },
     headerLogo: {
         backgroundColor: '#141831',
@@ -161,9 +132,9 @@ const styles = StyleSheet.create({
     },
     searchContant: {
         width: 100,
-        margin: 12,
+        margin: 10,
         borderWidth: 1,
-        padding: 10,
+        padding: 7,
         borderColor: '#aaa',
         borderRadius: 20,
         flex: 2,
