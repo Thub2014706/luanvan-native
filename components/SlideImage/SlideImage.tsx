@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingVertical: 20,
         paddingHorizontal: 30,
-        marginBottom: 20,
+        // marginBottom: 20,
     },
     backgroundImage: {
         position: 'absolute',

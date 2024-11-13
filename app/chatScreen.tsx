@@ -88,7 +88,7 @@ export default chatScreen;
 
 const styles = StyleSheet.create({
     container: {
-        height: HEIGHT,
+        minHeight: HEIGHT,
         flex: 1,
     },
 });

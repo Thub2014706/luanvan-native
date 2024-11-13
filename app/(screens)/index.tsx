@@ -15,6 +15,7 @@ import { router } from 'expo-router';
 import { detailPopup } from '~/services/PopupService';
 import Carousel from '~/components/Carousel/Carousel';
 import { detailGenre } from '~/services/GenreService';
+import moment from 'moment';
 
 const Home = () => {
     const user = useSelector((state) => state.auth.login.currentUser);
@@ -22,6 +23,7 @@ const Home = () => {
     const [info, setInfo] = useState(null);
     const dispatch = useDispatch();
     const [films1, setFilms1] = useState([]);
+    const [films2, setFilms2] = useState([]);
     const socket = useContext(SocketContext);
 
     useEffect(() => {
@@ -60,7 +62,7 @@ const Home = () => {
         };
         fetchInfo();
 
-        const fetchFilm = async () => {
+        const fetchFilm1 = async () => {
             const data = await listFilmBySchedule(statusShowTime[1]);
             const dataResult = await Promise.all(
                 data.map(async (item) => {
@@ -75,9 +77,26 @@ const Home = () => {
             );
             setFilms1(dataResult);
         };
-        fetchFilm();
+        fetchFilm1();
+
+        const fetchFilm2 = async () => {
+            const data = await listFilmBySchedule(statusShowTime[2]);
+            const dataResult = await Promise.all(
+                data.map(async (item) => {
+                    const genre = await Promise.all(
+                        item.genre.map(async (mini) => {
+                            const genreDetail = await detailGenre(mini);
+                            return genreDetail.name;
+                        }),
+                    );
+                    return { ...item, genre };
+                }),
+            );
+            setFilms2(dataResult);
+        };
+        fetchFilm2();
     }, []);
-    console.log(films1);
+    // console.log(films1);
 
     if (!info) {
         return <Text>Loading...</Text>;
@@ -102,7 +121,36 @@ const Home = () => {
                     </View>
                     <SlideImage />
                     {/* {films1?.length > 0 && <UpcomingFilm films1={films1} />} */}
-                    {films1?.length > 0 && <Carousel data={films1} />}
+                    <View style={{ backgroundColor: '#3a2a62', paddingVertical: 20 }}>
+                        {films1?.length > 0 && <Carousel data={films1} />}
+                    </View>
+                    <View style={{ marginTop: 20, paddingHorizontal: 10 }}>
+                        <Text style={{ fontSize: 18, fontWeight: '500' }}>PHIM SẮP CHIẾU</Text>
+                        <ScrollView horizontal>
+                            <View style={{ marginTop: 5 }}>
+                                {films2.map((item) => {
+                                    return (
+                                        <View key={item._id} style={{ width: 150 }}>
+                                            <ImageBase
+                                                pathImg={item.image}
+                                                style={{ width: 150, height: 230, borderRadius: 10 }}
+                                            />
+                                            <Text
+                                                style={{
+                                                    color: '#3a2a62',
+                                                    textAlign: 'center',
+                                                    fontWeight: '500',
+                                                    marginTop: 5,
+                                                }}
+                                            >
+                                                {moment(item.releaseDate).format('DD/MM/YYYY')}
+                                            </Text>
+                                        </View>
+                                    );
+                                })}
+                            </View>
+                        </ScrollView>
+                    </View>
                 </View>
             </ScrollView>
         </React.Fragment>
@@ -114,10 +162,11 @@ export default React.memo(Home);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#3a2a62',
-        height: HEIGHT + 200,
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        // backgroundColor: '#3a2a62',
+        // minHeight: HEIGHT + 200,
+        paddingBottom: 100,
     },
     headerLogo: {
         backgroundColor: '#141831',

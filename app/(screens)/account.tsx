@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
         padding: 10,
         flex: 1,
         backgroundColor: 'white',
-        height: HEIGHT,
+        // minHeight: HEIGHT,
     },
     login: {
         padding: 7,

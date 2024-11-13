@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { detailFilm } from '~/services/FilmService';
 import ImageBase from '~/components/ImageBase/ImageBase';
-import { nameDay, statusShowTime, WIDTH } from '~/constants';
+import { HEIGHT, nameDay, statusShowTime, WIDTH } from '~/constants';
 import { detailGenre } from '~/services/GenreService';
 import Age from '~/components/Age/Age';
 import { detailDirector } from '~/services/DirectorService';
@@ -20,6 +20,7 @@ import { Image } from 'expo-image';
 import BackIcon from '~/components/BackIcon/BackIcon';
 import { useSelector } from 'react-redux';
 import Loading from '~/components/Loading/Loading';
+import ReviewFilm from '~/components/ReviewFilm/ReviewFilm';
 
 const pickerStyle = {
     inputIOS: {
@@ -157,6 +158,7 @@ const DetailFilm = () => {
             />
             <ScrollView>
                 <View style={styles.container}>
+                    <ImageBase pathImg={film.data.image} style={styles.backgroundImage} blurRadius={3} />
                     <View style={styles.containerInfo}>
                         <ImageBase pathImg={film.data.image} style={{ width: 90, height: 140 }} />
                         <View style={styles.contentMain}>
@@ -321,6 +323,9 @@ const DetailFilm = () => {
                                 );
                             })}
                         </View>
+                        <View style={{ marginTop: 20 }}>
+                            <ReviewFilm id={film.data._id} />
+                        </View>
                     </View>
                 </View>
             </ScrollView>
@@ -334,9 +339,12 @@ export default React.memo(DetailFilm);
 
 const styles = StyleSheet.create({
     container: {
-        justifyContent: 'center',
-        alignItems: 'center',
+        // justifyContent: 'center',
+        // alignItems: 'center',
         padding: 10,
+        backgroundColor: 'white',
+        flex: 1,
+        minHeight: HEIGHT,
     },
     containerInfo: {
         marginTop: 40,
@@ -396,5 +404,11 @@ const styles = StyleSheet.create({
     no2: {
         borderColor: 'gray',
         color: 'gray',
+    },
+    backgroundImage: {
+        position: 'absolute',
+        width: WIDTH,
+        height: HEIGHT * 0.2,
+        resizeMode: 'cover',
     },
 });

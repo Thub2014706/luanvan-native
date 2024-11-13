@@ -100,7 +100,7 @@ const Login = () => {
                 }
             />
             <ScrollView>
-                <View style={{ backgroundColor: 'white', height: HEIGHT }}>
+                <View style={{ backgroundColor: 'white', minHeight: HEIGHT }}>
                     <View style={styles.container}>
                         <Text style={{ fontSize: 20, fontWeight: '500' }}>{isLogin ? 'Đăng nhập' : 'Đăng ký'}</Text>
                         {isLogin ? (

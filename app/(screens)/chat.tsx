@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
         // paddingHorizontal: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        height: HEIGHT,
+        minHeight: HEIGHT,
         backgroundColor: 'white',
         flexDirection: 'column',
     },

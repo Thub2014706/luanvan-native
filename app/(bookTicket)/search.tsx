@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
     },
     container: {
-        height: HEIGHT,
+        minHeight: HEIGHT,
         padding: 10,
         backgroundColor: 'white',
         flex: 1,

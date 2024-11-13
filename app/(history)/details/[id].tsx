@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
         // justifyContent: 'center',
         // alignItems: 'center',
         flex: 1,
-        height: HEIGHT,
+        minHeight: HEIGHT,
     },
     header: {
         backgroundColor: '#f1f8ff',
