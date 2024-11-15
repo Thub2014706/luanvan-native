@@ -136,38 +136,45 @@ const ResultSearch = () => {
                         <View style={{ gap: 10, flexDirection: 'column' }}>
                             {theaters.map((item) => {
                                 return (
-                                    <View key={item._id} style={styles.theaterContant}>
-                                        <ImageBase
-                                            pathImg={item.image}
-                                            style={{ width: WIDTH - 20, height: HEIGHT / 3.5 }}
-                                        />
-                                        <View style={styles.contentTheater}>
-                                            <Text
-                                                style={{
-                                                    color: 'white',
-                                                    fontWeight: '500',
-                                                    fontSize: 18,
-                                                    marginBottom: 5,
-                                                }}
-                                            >
-                                                {item.name.toUpperCase()}
-                                            </Text>
-                                            <View style={{ flexDirection: 'row', gap: 5 }}>
-                                                <Ionicons name="business-outline" size={18} color="#f3ea28" />
-
-                                                <Text style={{ color: 'white' }}>
-                                                    {item.lengthRoom} phòng chiếu với {item.lengthSeat} ghế.
+                                    <Link
+                                        href={{
+                                            pathname: '/(bookTicket)/theaterDetail/[id]',
+                                            params: { id: item._id },
+                                        }}
+                                    >
+                                        <View key={item._id} style={styles.theaterContant}>
+                                            <ImageBase
+                                                pathImg={item.image}
+                                                style={{ width: WIDTH - 20, height: HEIGHT / 3.5 }}
+                                            />
+                                            <View style={styles.contentTheater}>
+                                                <Text
+                                                    style={{
+                                                        color: 'white',
+                                                        fontWeight: '500',
+                                                        fontSize: 18,
+                                                        marginBottom: 5,
+                                                    }}
+                                                >
+                                                    {item.name.toUpperCase()}
                                                 </Text>
-                                            </View>
+                                                <View style={{ flexDirection: 'row', gap: 5 }}>
+                                                    <Ionicons name="business-outline" size={18} color="#f3ea28" />
 
-                                            <View style={{ flexDirection: 'row', gap: 5 }}>
-                                                <Ionicons name="location-outline" size={18} color="#f3ea28" />
-                                                <Text style={{ color: 'white' }}>
-                                                    {item.address}, {item.ward}, {item.district}, {item.province}.
-                                                </Text>
+                                                    <Text style={{ color: 'white' }}>
+                                                        {item.lengthRoom} phòng chiếu với {item.lengthSeat} ghế.
+                                                    </Text>
+                                                </View>
+
+                                                <View style={{ flexDirection: 'row', gap: 5 }}>
+                                                    <Ionicons name="location-outline" size={18} color="#f3ea28" />
+                                                    <Text style={{ color: 'white' }}>
+                                                        {item.address}, {item.ward}, {item.district}, {item.province}.
+                                                    </Text>
+                                                </View>
                                             </View>
                                         </View>
-                                    </View>
+                                    </Link>
                                 );
                             })}
                         </View>

@@ -5,7 +5,8 @@ import { Provider } from 'react-redux';
 import { persistor, store } from '~/redux/store/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { SocketProvider } from './SocketContext';
+import SocketProvider from './SocketContext';
+// import { SocketProvider } from './SocketContext';
 
 const RootLayout = () => {
     return (
@@ -18,6 +19,9 @@ const RootLayout = () => {
                                 <Stack.Screen name="(screens)" />
                                 <Stack.Screen name="(bookTicket)" />
                                 <Stack.Screen name="(account)" />
+                                <Stack.Screen name="(history)" />
+                                {/* <Stack.Screen name="eventDetail/[id]" /> */}
+                                {/* <Stack.Screen name="eventDetail/[id]" /> */}
                             </Stack>
                         </SafeAreaView>
                     </SafeAreaProvider>

@@ -13,7 +13,7 @@ const chatScreen = () => {
     // const socket = useSelector((state) => state.socket.socketConnection);
     const socket = useContext(SocketContext);
     // console.log(socket);
-    
+
     useEffect(() => {
         if (user && socket) {
             socket.emit('join', user.data.id);
@@ -62,23 +62,12 @@ const chatScreen = () => {
                 }
             />
             <View style={styles.container}>
-                <View>
-                    {/* <h5 className="mb-0">CineThu</h5>
-                        <div>
-                            <FontAwesomeIcon
-                                icon={faXmark}
-                                size="lg"
-                                onClick={handleClose}
-                                style={{ cursor: 'pointer' }}
-                            />
-                        </div> */}
-                </View>
-                <View style={{ flex: 1, padding: 10 }}>
+                <View style={{ flex: 1, paddingHorizontal: 10 }}>
                     <ChatList chats={chats} user={user} />
                 </View>
-                <View>
+                {/* <View> */}
                     <InputChat addMessage={addMessage} />
-                </View>
+                {/* </View> */}
             </View>
         </React.Fragment>
     );
@@ -88,7 +77,7 @@ export default chatScreen;
 
 const styles = StyleSheet.create({
     container: {
-        minHeight: HEIGHT,
+        height: HEIGHT,
         flex: 1,
     },
 });

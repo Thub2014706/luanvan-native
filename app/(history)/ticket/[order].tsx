@@ -2,7 +2,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { ticketRefundByOrder } from '~/services/TicketRefundService';
-import { Barcode } from 'expo-barcode-generator';
+// import Barcode from 'react-native-barcode-builder';
 import { detailOrderTicket } from '../../../services/OrderTicketService';
 import BackIcon from '~/components/BackIcon/BackIcon';
 import moment from 'moment';
@@ -14,13 +14,14 @@ import { detailRoom } from '~/services/RoomService';
 import { detailSeat } from '~/services/SeatService';
 
 const DetailTicket = () => {
-    const { id } = useLocalSearchParams<{ id: string }>();
-    const [order, setOrder] = useState(null);
+    const { order } = useLocalSearchParams<{ order: string }>();
+    const [orderDetail, setOrderDetail] = useState(null);
     const [refund, setRefund] = useState(null);
+    // console.log(id);
 
     useEffect(() => {
         const fetch = async () => {
-            const data = await detailOrderTicket(id);
+            const data = await detailOrderTicket(order);
             if (data) {
                 const showTime = await detailShowTimeById(data.showTime);
                 const film = await detailFilmBySchedule(showTime.schedule);
@@ -33,7 +34,7 @@ const DetailTicket = () => {
                     }),
                 );
                 // console.log('ccc', data.seats);
-                setOrder({
+                setOrderDetail({
                     ...data,
                     showTime,
                     film: film.name,
@@ -45,7 +46,7 @@ const DetailTicket = () => {
             // setOrder(data);
         };
         fetch();
-    }, [id]);
+    }, [order]);
 
     // console.log(order);
     useEffect(() => {
@@ -69,26 +70,29 @@ const DetailTicket = () => {
                         numberOfLines={1}
                         ellipsizeMode="tail"
                     >
-                        {id}
+                        {order}
                     </Text>
                 }
             />
-            {order !== null && (
+            {orderDetail !== null && (
                 <ScrollView>
                     <View style={styles.container}>
                         <View>
                             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                <Barcode
-                                    value={id}
-                                    options={{ format: 'CODE128', background: 'white' }}
+                                {/* <Barcode
+                                    value={order}
+                                    format="CODE128"
+                                    // options={{ format: 'CODE128', background: 'white' }}
                                     // height={10}
                                     // width={2}
-                                />
+                                /> */}
                             </View>
                             <View style={{ alignItems: 'flex-start' }}>
-                                <Text>Thời gian đặt vé: {moment(order.createdAt).format('HH:mm DD/MM/YYYY')}</Text>
-                                <Text>Hình thức đặt vé: {order.staff ? 'Đặt vé tại rạp' : 'Đặt vé online'}</Text>
-                                {order.staff && <Text>Nhân viên đặt vé:</Text>}
+                                <Text>
+                                    Thời gian đặt vé: {moment(orderDetail.createdAt).format('HH:mm DD/MM/YYYY')}
+                                </Text>
+                                <Text>Hình thức đặt vé: {orderDetail.staff ? 'Đặt vé tại rạp' : 'Đặt vé online'}</Text>
+                                {orderDetail.staff && <Text>Nhân viên đặt vé:</Text>}
                                 <Text>
                                     Trạng thái:{' '}
                                     {refund === null ? (
@@ -104,10 +108,12 @@ const DetailTicket = () => {
                                         <View style={[styles.heading, styles.lineRight]}>
                                             <Text style={{ fontWeight: '500', margin: 10 }}>PHIM</Text>
                                         </View>
-                                        <View style={[styles.heading, order.combo.length > 0 && styles.lineRight]}>
+                                        <View
+                                            style={[styles.heading, orderDetail.combo.length > 0 && styles.lineRight]}
+                                        >
                                             <Text style={{ fontWeight: '500', margin: 10 }}>SUẤT CHIẾU</Text>
                                         </View>
-                                        {order.combo.length > 0 && (
+                                        {orderDetail.combo.length > 0 && (
                                             <View style={styles.heading}>
                                                 <Text style={{ fontWeight: '500', margin: 10 }}>COMBO BẮP NƯỚC</Text>
                                             </View>
@@ -116,35 +122,37 @@ const DetailTicket = () => {
                                     </View>
                                     <View style={styles.body}>
                                         <View style={[styles.heading, styles.lineRight]}>
-                                            <Text>{order.film.toUpperCase()}</Text>
+                                            <Text>{orderDetail.film.toUpperCase()}</Text>
                                         </View>
-                                        <View style={[styles.heading, order.combo.length > 0 && styles.lineRight]}>
+                                        <View
+                                            style={[styles.heading, orderDetail.combo.length > 0 && styles.lineRight]}
+                                        >
                                             <View
                                                 style={{ margin: 10, justifyContent: 'center', alignItems: 'center' }}
                                             >
-                                                <Text>Rạp: {order.theater}</Text>
+                                                <Text>Rạp: {orderDetail.theater}</Text>
                                                 <Text>
-                                                    Phòng: {order.room.name} ({order.room.type})
+                                                    Phòng: {orderDetail.room.name} ({orderDetail.room.type})
                                                 </Text>
                                                 <Text>
                                                     Ghế:{' '}
-                                                    {order.seat.map((mini, index) => (
+                                                    {orderDetail.seat.map((mini, index) => (
                                                         <Text key={index}>
                                                             {String.fromCharCode(64 + mini.row)}
                                                             {mini.col}
-                                                            {index < order.seat.length - 1 && ', '}
+                                                            {index < orderDetail.seat.length - 1 && ', '}
                                                         </Text>
                                                     ))}
                                                 </Text>
                                                 <Text>
-                                                    {moment(order.showTime.date).format('DD/MM/YYYY')}{' '}
-                                                    {order.showTime.timeStart} - {order.showTime.timeEnd}
+                                                    {moment(orderDetail.showTime.date).format('DD/MM/YYYY')}{' '}
+                                                    {orderDetail.showTime.timeStart} - {orderDetail.showTime.timeEnd}
                                                 </Text>
                                             </View>
                                         </View>
-                                        {order.combo.length > 0 && (
+                                        {orderDetail.combo.length > 0 && (
                                             <View style={styles.heading}>
-                                                {order.combo.map((mini) => (
+                                                {orderDetail.combo.map((mini) => (
                                                     <Text>
                                                         {mini.quantity} {mini.name.toUpperCase()}
                                                     </Text>
@@ -167,31 +175,34 @@ const DetailTicket = () => {
                                                         alignItems: 'center',
                                                     }}
                                                 >
-                                                    {(order.usePoint > 0 || order.discount) && (
+                                                    {(orderDetail.usePoint > 0 || orderDetail.discount) && (
                                                         <Text>
                                                             Tổng:{' '}
                                                             {(
-                                                                order.usePoint +
-                                                                (order.discount ? order.discount.useDiscount : 0) +
-                                                                order.price
+                                                                orderDetail.usePoint +
+                                                                (ordorderDetailr.discount
+                                                                    ? orderDetail.discount.useDiscount
+                                                                    : 0) +
+                                                                orderDetail.price
                                                             ).toLocaleString('it-IT')}{' '}
                                                             VNĐ
                                                         </Text>
                                                     )}
-                                                    {order.usePoint > 0 && (
+                                                    {orderDetail.usePoint > 0 && (
                                                         <Text>
-                                                            Điểm thanh toán: -{order.usePoint.toLocaleString('it-IT')}{' '}
+                                                            Điểm thanh toán: -
+                                                            {orderDetail.usePoint.toLocaleString('it-IT')} VNĐ
+                                                        </Text>
+                                                    )}
+                                                    {orderDetail.discount && (
+                                                        <Text>
+                                                            Mã khuyến mãi: -
+                                                            {orderDetail.discount.useDiscount.toLocaleString('it-IT')}{' '}
                                                             VNĐ
                                                         </Text>
                                                     )}
-                                                    {order.discount && (
-                                                        <Text>
-                                                            Mã khuyến mãi: -
-                                                            {order.discount.useDiscount.toLocaleString('it-IT')} VNĐ
-                                                        </Text>
-                                                    )}
                                                     <Text>
-                                                        Tổng thanh toán: {order.price.toLocaleString('it-IT')} VNĐ
+                                                        Tổng thanh toán: {orderDetail.price.toLocaleString('it-IT')} VNĐ
                                                     </Text>
                                                 </View>
                                             </View>

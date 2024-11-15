@@ -129,6 +129,7 @@ export const responsive = {
 
 export const icon = {
     index: (props: any) => <Ionicons name="home" size={24} {...props} />,
+    theater: (props: any) => <Ionicons name="business-sharp" size={24} {...props} />,
     chat: (props: any) => <Ionicons name="chatbox" size={24} {...props} />,
     account: (props: any) => <Ionicons name="person" size={24} {...props} />,
 };

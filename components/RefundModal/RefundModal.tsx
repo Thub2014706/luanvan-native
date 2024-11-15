@@ -11,13 +11,15 @@ const RefundModal = ({ setModalVisible, modalVisible, id }) => {
     const handleSubmit = async () => {
         if (isChecked) {
             await addTicketRefund({ order: id, user: user?.data.id });
+            setChecked(false);
             setModalVisible(!modalVisible);
         }
     };
+
     return (
         <View>
             <Modal
-                animationType="sTextde"
+                // animationType="sTextde"
                 transparent={true}
                 visible={modalVisible}
                 // onRequestClose={() => {
@@ -54,7 +56,10 @@ const RefundModal = ({ setModalVisible, modalVisible, id }) => {
                         >
                             <Pressable
                                 style={[styles.button, styles.buttonClose]}
-                                onPress={() => setModalVisible(!modalVisible)}
+                                onPress={() => {
+                                    setModalVisible(!modalVisible);
+                                    setChecked(false);
+                                }}
                             >
                                 <Text style={styles.textStyle}>Đóng</Text>
                             </Pressable>

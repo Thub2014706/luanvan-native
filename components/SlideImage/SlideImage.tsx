@@ -41,9 +41,9 @@ const SlideImage = () => {
 
     return (
         <View style={styles.container}>
-            {banner.length > 0 && (
+            {/* {banner.length > 0 && (
                 <ImageBase pathImg={banner[numberImg].image} style={styles.backgroundImage} blurRadius={50} />
-            )}
+            )} */}
             <ScrollView
                 ref={scrollRef}
                 onMomentumScrollEnd={(e) => {
@@ -51,7 +51,7 @@ const SlideImage = () => {
                     const currentIndex = Math.round(scrollPosition / WIDTH);
                     setNumberImg(currentIndex);
                 }}
-                // showsHorizontalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
                 pagingEnabled
                 horizontal
                 bounces={false} // Tắt bounces
@@ -59,7 +59,7 @@ const SlideImage = () => {
                 decelerationRate="fast"
             >
                 {banner.map((item, index) => (
-                    <ImageBase key={item.id} pathImg={item.image} style={styles.wrap} />
+                    <ImageBase key={item.id} pathImg={item.image} style={styles.wrap} resizeMode='contain' />
                 ))}
             </ScrollView>
             <View style={styles.wrapDot}>
@@ -80,15 +80,16 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        paddingVertical: 20,
-        paddingHorizontal: 30,
+        // paddingVertical: 20,
+        // paddingHorizontal: 30,
         // marginBottom: 20,
+        backgroundColor: '#3a2a62'
     },
     backgroundImage: {
         position: 'absolute',
         width: WIDTH,
         height: HEIGHT * 0.21,
-        resizeMode: 'cover',
+        // resizeMode: 'contain',
     },
     wrap: {
         width: WIDTH,

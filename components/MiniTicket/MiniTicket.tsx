@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { signAge, standardAge, WIDTH } from '~/constants';
 import moment from 'moment';
 import ImageBase from '../ImageBase/ImageBase';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { ticketRefundByOrder } from '~/services/TicketRefundService';
 
 const MiniTicket = ({ item, handleRefund }) => {
@@ -18,6 +18,10 @@ const MiniTicket = ({ item, handleRefund }) => {
         };
         fetch();
     }, [item.item._id]);
+
+    const handleLink = (id) => {
+        router.push({ pathname: '/(history)/ticket/[order]', params: { order: id } });
+    };
 
     return (
         <View>
@@ -55,18 +59,19 @@ const MiniTicket = ({ item, handleRefund }) => {
                         </Text>
                     </Text>
                     <View style={{ flexDirection: 'row', gap: 5 }}>
-                        <Link
-                            href={{ pathname: '/(history)/details/[id]', params: { id: item.item.idOrder } }}
-                            style={{
-                                backgroundColor: '#3a2a62',
-                                borderRadius: 5,
-                                paddingHorizontal: 15,
-                                alignSelf: 'baseline',
-                                paddingVertical: 5,
-                            }}
-                        >
-                            <Text style={{ color: 'white' }}>Chi tiết</Text>
-                        </Link>
+                        <TouchableWithoutFeedback onPress={() => handleLink(item.item.idOrder)}>
+                            <View
+                                style={{
+                                    backgroundColor: '#3a2a62',
+                                    borderRadius: 5,
+                                    paddingHorizontal: 15,
+                                    alignSelf: 'baseline',
+                                    paddingVertical: 5,
+                                }}
+                            >
+                                <Text style={{ color: 'white' }}>Chi tiết</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
                         {refund === null && (
                             <View>
                                 <TouchableWithoutFeedback onPress={handleRefund}>

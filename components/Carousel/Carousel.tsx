@@ -53,10 +53,10 @@ const Carousel = ({ data }) => {
                                 <View style={{ marginTop: 10 }}>
                                     <Text style={{ fontWeight: '500', fontSize: 18, color: 'white' }}>{item.name}</Text>
                                     <View style={styles.inline}>
-                                        {item.genre.map((mini, index) => (
-                                            <Text key={item} style={{ color: 'white', marginBottom: 5 }}>
+                                        {item.genre.map((mini, i) => (
+                                            <Text key={i} style={{ color: 'white', marginBottom: 5 }}>
                                                 {mini}
-                                                {index < item.genre.length - 1 && ', '}
+                                                {i < item.genre.length - 1 && ', '}
                                             </Text>
                                         ))}
                                     </View>

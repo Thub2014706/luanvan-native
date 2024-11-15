@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 // Tạo context
 export const SocketContext = createContext();
 
-export const SocketProvider = ({ children }) => {
+const SocketProvider = ({ children }) => {
     const user = useSelector((state) => state.auth.login.currentUser);
     const [socket, setSocket] = useState(null);
 
@@ -26,3 +26,5 @@ export const SocketProvider = ({ children }) => {
 
     return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;
 };
+
+export default SocketProvider;

@@ -7,7 +7,7 @@ import { detailPopup } from '~/services/PopupService';
 
 export const ShowUpContext = createContext();
 
-export function ShowUpProvider({ children }) {
+function ShowUpProvider({ children }) {
     const [showUp, setShowUp] = useState(true);
     const [pop, setPop] = useState(null);
 
@@ -64,3 +64,6 @@ export function ShowUpProvider({ children }) {
 export function useShowUp() {
     return useContext(ShowUpContext);
 }
+
+export default ShowUpProvider;
+

@@ -6,6 +6,7 @@ import MiniTicket from '~/components/MiniTicket/MiniTicket';
 import BackIcon from '~/components/BackIcon/BackIcon';
 import { allTicketRefund } from '~/services/TicketRefundService';
 import RefundModal from '~/components/RefundModal/RefundModal';
+import { HEIGHT } from '~/constants';
 
 const History = () => {
     const user = useSelector((state) => state.auth.login.currentUser);
@@ -123,6 +124,7 @@ const styles = StyleSheet.create({
         padding: 10,
         gap: 10,
         backgroundColor: 'white',
+        minHeight: HEIGHT
     },
     viewSelect: {
         justifyContent: 'center',

@@ -6,25 +6,24 @@ import { useDispatch, useSelector } from 'react-redux';
 import { listFilmBySchedule } from '~/services/FilmService';
 import { HEIGHT, statusShowTime, WIDTH } from '~/constants';
 import SlideImage from '~/components/SlideImage/SlideImage';
-import UpcomingFilm from '~/components/UpcomingFilm/UpcomingFilm';
-import { io } from 'socket.io-client';
 import { setNumberChat, setSocketConnection } from '~/redux/socket/socketSlide';
 import { SocketContext } from '../SocketContext';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { detailPopup } from '~/services/PopupService';
 import Carousel from '~/components/Carousel/Carousel';
 import { detailGenre } from '~/services/GenreService';
 import moment from 'moment';
+import { listEvent } from '~/services/EventService';
 
 const Home = () => {
     const user = useSelector((state) => state.auth.login.currentUser);
-    const [search, setSearch] = useState('');
     const [info, setInfo] = useState(null);
     const dispatch = useDispatch();
     const [films1, setFilms1] = useState([]);
     const [films2, setFilms2] = useState([]);
     const socket = useContext(SocketContext);
+    const [events, setEvents] = useState([]);
 
     useEffect(() => {
         if (user && socket) {
@@ -96,7 +95,14 @@ const Home = () => {
         };
         fetchFilm2();
     }, []);
-    // console.log(films1);
+
+    useEffect(() => {
+        const fetch = async () => {
+            const data = await listEvent();
+            setEvents(data);
+        };
+        fetch();
+    }, []);
 
     if (!info) {
         return <Text>Loading...</Text>;
@@ -124,28 +130,64 @@ const Home = () => {
                     <View style={{ backgroundColor: '#3a2a62', paddingVertical: 20 }}>
                         {films1?.length > 0 && <Carousel data={films1} />}
                     </View>
-                    <View style={{ marginTop: 20, paddingHorizontal: 10 }}>
+                    <View style={{ marginTop: 20, paddingHorizontal: 5 }}>
                         <Text style={{ fontSize: 18, fontWeight: '500' }}>PHIM SẮP CHIẾU</Text>
                         <ScrollView horizontal>
-                            <View style={{ marginTop: 5 }}>
-                                {films2.map((item) => {
+                            <View style={{ marginTop: 5, flexDirection: 'row', gap: 10 }}>
+                                {films2.map((item, index) => {
                                     return (
-                                        <View key={item._id} style={{ width: 150 }}>
-                                            <ImageBase
-                                                pathImg={item.image}
-                                                style={{ width: 150, height: 230, borderRadius: 10 }}
-                                            />
-                                            <Text
-                                                style={{
-                                                    color: '#3a2a62',
-                                                    textAlign: 'center',
-                                                    fontWeight: '500',
-                                                    marginTop: 5,
-                                                }}
-                                            >
-                                                {moment(item.releaseDate).format('DD/MM/YYYY')}
-                                            </Text>
-                                        </View>
+                                        <Link
+                                            href={{ pathname: '/(bookTicket)/details/[id]', params: { id: item._id } }}
+                                            key={index}
+                                        >
+                                            <View style={{ width: 150 }}>
+                                                <ImageBase
+                                                    pathImg={item.image}
+                                                    style={{ width: 150, height: 230, borderRadius: 10 }}
+                                                />
+                                                <Text
+                                                    style={{
+                                                        color: '#3a2a62',
+                                                        textAlign: 'center',
+                                                        fontWeight: '500',
+                                                        marginTop: 5,
+                                                    }}
+                                                >
+                                                    {moment(item.releaseDate).format('DD/MM/YYYY')}
+                                                </Text>
+                                            </View>
+                                        </Link>
+                                    );
+                                })}
+                            </View>
+                        </ScrollView>
+                    </View>
+                    <View style={{ marginTop: 20, paddingHorizontal: 5 }}>
+                        <Text style={{ fontSize: 18, fontWeight: '500' }}>SỰ KIỆN</Text>
+                        <ScrollView horizontal>
+                            <View style={{ marginTop: 5, flexDirection: 'row', gap: 10 }}>
+                                {events.map((item) => {
+                                    return (
+                                        <Link
+                                            href={{ pathname: '/eventDetail/[id]', params: { id: item._id } }}
+                                            key={item._id}
+                                        >
+                                            <View style={{ width: 200 }}>
+                                                <ImageBase pathImg={item.image} style={{ height: 200, width: 200 }} />
+                                                <Text
+                                                    numberOfLines={1}
+                                                    ellipsizeMode="tail"
+                                                    style={{
+                                                        color: '#3a2a62',
+                                                        textAlign: 'center',
+                                                        fontWeight: '500',
+                                                        marginTop: 5,
+                                                    }}
+                                                >
+                                                    {item.title}
+                                                </Text>
+                                            </View>
+                                        </Link>
                                     );
                                 })}
                             </View>

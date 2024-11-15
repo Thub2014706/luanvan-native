@@ -53,6 +53,7 @@ const DetailFilm = () => {
     const [selectPro, setSelectPro] = useState();
     const [theaters, setTheaters] = useState([]);
     const router = useRouter();
+    
 
     useEffect(() => {
         const fetch = async () => {
@@ -167,7 +168,7 @@ const DetailFilm = () => {
                             <Text style={styles.text}>Thời lượng: {film.data.time} phút</Text>
                             <View style={styles.inline}>
                                 {film.arrayGenre.map((item, index) => (
-                                    <Text key={item._id} style={styles.text}>
+                                    <Text key={index} style={styles.text}>
                                         {item}
                                         {index < film.arrayGenre.length - 1 && ', '}
                                     </Text>
@@ -181,7 +182,7 @@ const DetailFilm = () => {
                             <Text>Đạo diễn: </Text>
                             {film.arrayDirector.map((item, index) => {
                                 return (
-                                    <Text key={item._id} style={styles.text}>
+                                    <Text key={index} style={styles.text}>
                                         {item}
                                         {index < film.arrayDirector.length - 1 && ', '}
                                     </Text>
@@ -192,7 +193,7 @@ const DetailFilm = () => {
                             <Text>Diễn viên: </Text>
                             {film.arrayPerformer.map((item, index) => {
                                 return (
-                                    <Text key={item._id} style={styles.text}>
+                                    <Text key={index} style={styles.text}>
                                         {item}
                                         {index < film.arrayPerformer.length - 1 && ', '}
                                     </Text>
@@ -215,7 +216,7 @@ const DetailFilm = () => {
                             showsHorizontalScrollIndicator={false}
                             renderItem={({ item, index }) => (
                                 <ScheduleMini
-                                    key={item.day}
+                                    key={index}
                                     date={item.date}
                                     day={now.getDay() === item.day ? 'Hôm nay' : nameDay[item.day]}
                                     handleSelectDay={() => handleSelect(index, item.full)}
@@ -237,7 +238,7 @@ const DetailFilm = () => {
                             {theaters.map((item, index) => {
                                 return (
                                     <LinearGradient
-                                        key={item._id}
+                                        key={index}
                                         colors={['#d5bcfc', '#aec7fa']}
                                         style={styles.theaterContant}
                                         start={{ x: 0.45, y: 0.25 }}
