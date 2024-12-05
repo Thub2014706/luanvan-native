@@ -85,11 +85,11 @@ const ChatList = ({ chats, user }) => {
                                                         ))) ||
                                             !chats[index - 1] ? (
                                                 <Image
-                                                    source={require('~/assets/images/user-circle-512.webp')}
-                                                    style={{ height: 50, width: 50 }}
+                                                    source={require('~/assets/images/admin.jpg')}
+                                                    style={{ height: 40, width: 40, borderRadius: 40, marginEnd: 5 }}
                                                 />
                                             ) : (
-                                                <View style={{ width: 50 }}></View>
+                                                <View style={{ width: 45 }}></View>
                                             )}
                                         </View>
                                         <View style={styles.chatReceiver}>
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         flex: 1,
-        paddingVertical: 10
+        paddingVertical: 10,
     },
     timeBig: {
         borderRadius: 10,

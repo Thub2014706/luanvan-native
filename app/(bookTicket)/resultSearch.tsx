@@ -148,29 +148,31 @@ const ResultSearch = () => {
                                                 style={{ width: WIDTH - 20, height: HEIGHT / 3.5 }}
                                             />
                                             <View style={styles.contentTheater}>
-                                                <Text
-                                                    style={{
-                                                        color: 'white',
-                                                        fontWeight: '500',
-                                                        fontSize: 18,
-                                                        marginBottom: 5,
-                                                    }}
-                                                >
-                                                    {item.name.toUpperCase()}
-                                                </Text>
-                                                <View style={{ flexDirection: 'row', gap: 5 }}>
-                                                    <Ionicons name="business-outline" size={18} color="#f3ea28" />
-
-                                                    <Text style={{ color: 'white' }}>
-                                                        {item.lengthRoom} phòng chiếu với {item.lengthSeat} ghế.
+                                                <View style={{width: WIDTH - 80}}>
+                                                    <Text
+                                                        style={{
+                                                            color: 'white',
+                                                            fontWeight: '500',
+                                                            fontSize: 18,
+                                                            marginBottom: 5,
+                                                        }}
+                                                    >
+                                                        {item.name.toUpperCase()}
                                                     </Text>
-                                                </View>
-
-                                                <View style={{ flexDirection: 'row', gap: 5 }}>
-                                                    <Ionicons name="location-outline" size={18} color="#f3ea28" />
-                                                    <Text style={{ color: 'white' }}>
-                                                        {item.address}, {item.ward}, {item.district}, {item.province}.
-                                                    </Text>
+                                                    <View style={{ flexDirection: 'row', gap: 5 }}>
+                                                        <Ionicons name="business-outline" size={18} color="#f3ea28" />
+    
+                                                        <Text style={{ color: 'white' }}>
+                                                            {item.lengthRoom} phòng chiếu với {item.lengthSeat} ghế.
+                                                        </Text>
+                                                    </View>
+    
+                                                    <View style={{ flexDirection: 'row', gap: 5 }}>
+                                                        <Ionicons name="location-outline" size={18} color="#f3ea28" />
+                                                        <Text style={{ color: 'white' }}>
+                                                            {item.address}, {item.ward}, {item.district}, {item.province}.
+                                                        </Text>
+                                                    </View>
                                                 </View>
                                             </View>
                                         </View>
@@ -205,6 +207,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(22, 82, 202, 0.4)',
         paddingHorizontal: 20,
         paddingVertical: 10,
+        // paddingEnd: 10
     },
     input: {
         color: 'black',
@@ -215,7 +218,7 @@ const styles = StyleSheet.create({
         width: 80,
         // margin: 10,
         borderWidth: 1,
-        paddingVertical: 5,
+        // paddingVertical: 5,
         borderColor: '#aaa',
         borderRadius: 20,
         flex: 2,
@@ -225,6 +228,7 @@ const styles = StyleSheet.create({
         gap: 5,
         paddingHorizontal: 10,
         marginHorizontal: 20,
+        height: 40
     },
     filmContant: {
         flexDirection: 'row',

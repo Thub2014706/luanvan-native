@@ -11,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Link, router } from 'expo-router';
 
 const ReviewFilm = ({ id }) => {
+    const user = useSelector((state) => state.auth.login.currentUser);
     const [avg, setAvg] = useState(0);
     const [comments, setComments] = useState([]);
 
@@ -120,11 +121,11 @@ const ReviewFilm = ({ id }) => {
                 ) : (
                     <Text style={{ textAlign: 'center', marginTop: 10, color: '#3a2a62' }}>Không có đánh giá nào</Text>
                 )}
-                <View style={styles.button}>
+                {user && <View style={styles.button}>
                     <Link href={{ pathname: '/write/[film]', params: { id } }}>
                         <Text style={{ color: 'white' }}>Viết đánh giá</Text>
                     </Link>
-                </View>
+                </View>}
             </View>
         </View>
     );

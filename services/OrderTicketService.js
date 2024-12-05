@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { showToast } from '~/constants';
 
-export const addOrderTicket = async (data, token) => {
+export const addOrderTicket = async (data, token, axiosJWT) => {
     try {
-        const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/api/order-ticket`, data, {
+        const response = await axiosJWT.post(`${process.env.EXPO_PUBLIC_API_URL}/api/order-ticket`, data, {
             headers: { authorization: `Bearer ${token}` },
         });
         return response.data;

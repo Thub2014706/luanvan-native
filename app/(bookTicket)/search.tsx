@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
         width: 80,
         // margin: 10,
         borderWidth: 1,
-        paddingVertical: 5,
+        // paddingVertical: 1,
         borderColor: '#aaa',
         borderRadius: 20,
         flex: 2,
@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
         gap: 5,
         paddingHorizontal: 10,
         marginHorizontal: 20,
+        height: 40
     },
     container: {
         minHeight: HEIGHT,

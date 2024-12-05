@@ -11,11 +11,14 @@ import { HEIGHT, WIDTH } from '~/constants';
 import * as Progress from 'react-native-progress';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableWithoutFeedback } from 'react-native';
+import { logoutSuccess } from '~/redux/auth/authSlice';
+import { createAxios } from '~/createInstance';
 
 const account = () => {
     const user = useSelector((state) => state.auth.login.currentUser);
     const [userInfo, setUserInfo] = useState(null);
     const dispatch = useDispatch();
+    let axiosJWT = createAxios(user, dispatch, logoutSuccess);
 
     // console.log(user);
     useEffect(() => {
@@ -36,7 +39,7 @@ const account = () => {
         // await cancelAllHold(user?.data.id);
         console.log('aa');
 
-        await logout(dispatch, user?.accessToken);
+        await logout(dispatch, user?.accessToken, axiosJWT);
     };
 
     return (

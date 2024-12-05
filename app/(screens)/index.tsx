@@ -132,7 +132,7 @@ const Home = () => {
                     </View>
                     <View style={{ marginTop: 20, paddingHorizontal: 5 }}>
                         <Text style={{ fontSize: 18, fontWeight: '500' }}>PHIM SẮP CHIẾU</Text>
-                        <ScrollView horizontal>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                             <View style={{ marginTop: 5, flexDirection: 'row', gap: 10 }}>
                                 {films2.map((item, index) => {
                                     return (
@@ -164,7 +164,7 @@ const Home = () => {
                     </View>
                     <View style={{ marginTop: 20, paddingHorizontal: 5 }}>
                         <Text style={{ fontSize: 18, fontWeight: '500' }}>SỰ KIỆN</Text>
-                        <ScrollView horizontal>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                             <View style={{ marginTop: 5, flexDirection: 'row', gap: 10 }}>
                                 {events.map((item) => {
                                     return (

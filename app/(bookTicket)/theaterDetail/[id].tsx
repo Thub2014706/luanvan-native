@@ -115,101 +115,108 @@ const TheaterDetail = () => {
                             ></FlatList>
                         </View>
                         <View style={{ flex: 1 }}>
-                            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
-                                <View style={styles.line}></View>
-                            </View>
-                            <View style={{ marginVertical: 10 }}>
+                            <View style={{ marginVertical: 10, gap: 10 }}>
                                 {showTimes.length > 0 ? (
                                     showTimes.map((item) => {
                                         return (
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <ImageBase
-                                                    pathImg={item.film.image}
-                                                    style={{ height: 200, width: 140 }}
-                                                />
-                                                <View style={{ paddingHorizontal: 5 }}>
-                                                    <View
-                                                        style={{ flexDirection: 'row', gap: 5, alignItems: 'flex-end' }}
-                                                    >
-                                                        <Text style={{ fontWeight: '500' }}>
-                                                            {item.film.name.toUpperCase()}
-                                                        </Text>
-                                                        <Age age={item.film.age} />
-                                                    </View>
-                                                    <View>
-                                                        {Object.entries(
-                                                            item.showTimes.reduce((acc, mini) => {
-                                                                if (!acc[mini.translate]) {
-                                                                    acc[mini.translate] = [];
-                                                                }
-                                                                acc[mini.translate].push(mini);
-                                                                return acc;
-                                                            }, {}),
-                                                        ).map(([translate, mini]) => (
-                                                            <View>
-                                                                <Text
-                                                                    style={{
-                                                                        marginVertical: 5,
-                                                                        textDecorationLine: 'underline',
-                                                                    }}
-                                                                >
-                                                                    {translate}
-                                                                </Text>
-                                                                <View
-                                                                    style={{
-                                                                        flexDirection: 'row',
-                                                                        gap: 5,
-                                                                        flexWrap: 'wrap',
-                                                                        width: WIDTH - 20 - 140,
-                                                                    }}
-                                                                >
-                                                                    {mini.map((min) => (
-                                                                        <TouchableWithoutFeedback
-                                                                            onPress={() =>
-                                                                                min.status === statusShowTime[2] &&
-                                                                                min.test === 1 &&
-                                                                                min.late === 1 &&
-                                                                                handleSeat(min._id)
-                                                                            }
-                                                                            // href={{
-                                                                            //     pathname:
-
-                                                                            //         '/seat/[showTime]',
-                                                                            //     params: { id: min._id },
-                                                                            // }}
-                                                                        >
-                                                                            <View
-                                                                                style={[
-                                                                                    styles.time,
+                                            <React.Fragment>
+                                                <View
+                                                    style={{
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        marginVertical: 10,
+                                                    }}
+                                                >
+                                                    <View style={styles.line}></View>
+                                                </View>
+                                                <View style={{ flexDirection: 'row' }}>
+                                                    <ImageBase
+                                                        pathImg={item.film.image}
+                                                        style={{ height: 200, width: 140 }}
+                                                    />
+                                                    <View style={{ paddingHorizontal: 5 }}>
+                                                        <View
+                                                            style={{
+                                                                flexDirection: 'row',
+                                                                gap: 5,
+                                                                alignItems: 'flex-end',
+                                                            }}
+                                                        >
+                                                            <Text style={{ fontWeight: '500' }}>
+                                                                {item.film.name.toUpperCase()}
+                                                            </Text>
+                                                            <Age age={item.film.age} />
+                                                        </View>
+                                                        <View>
+                                                            {Object.entries(
+                                                                item.showTimes.reduce((acc, mini) => {
+                                                                    if (!acc[mini.translate]) {
+                                                                        acc[mini.translate] = [];
+                                                                    }
+                                                                    acc[mini.translate].push(mini);
+                                                                    return acc;
+                                                                }, {}),
+                                                            ).map(([translate, mini]) => (
+                                                                <View>
+                                                                    <Text
+                                                                        style={{
+                                                                            marginVertical: 5,
+                                                                            textDecorationLine: 'underline',
+                                                                        }}
+                                                                    >
+                                                                        {translate}
+                                                                    </Text>
+                                                                    <View
+                                                                        style={{
+                                                                            flexDirection: 'row',
+                                                                            gap: 5,
+                                                                            flexWrap: 'wrap',
+                                                                            width: WIDTH - 20 - 140,
+                                                                        }}
+                                                                    >
+                                                                        {mini.map((min) => (
+                                                                            <TouchableWithoutFeedback
+                                                                                onPress={() =>
                                                                                     min.status === statusShowTime[2] &&
                                                                                     min.test === 1 &&
-                                                                                    min.late === 1
-                                                                                        ? styles.yes
-                                                                                        : styles.no,
-                                                                                ]}
+                                                                                    min.late === 1 &&
+                                                                                    handleSeat(min._id)
+                                                                                }
                                                                             >
-                                                                                <Text
-                                                                                    style={{
-                                                                                        color:
-                                                                                            min.status ===
-                                                                                                statusShowTime[2] &&
-                                                                                            min.test === 1 &&
-                                                                                            min.late === 1
-                                                                                                ? '#3a2a62'
-                                                                                                : '#989898',
-                                                                                    }}
+                                                                                <View
+                                                                                    style={[
+                                                                                        styles.time,
+                                                                                        min.status ===
+                                                                                            statusShowTime[2] &&
+                                                                                        min.test === 1 &&
+                                                                                        min.late === 1
+                                                                                            ? styles.yes
+                                                                                            : styles.no,
+                                                                                    ]}
                                                                                 >
-                                                                                    {min.timeStart}
-                                                                                </Text>
-                                                                            </View>
-                                                                        </TouchableWithoutFeedback>
-                                                                    ))}
+                                                                                    <Text
+                                                                                        style={{
+                                                                                            color:
+                                                                                                min.status ===
+                                                                                                    statusShowTime[2] &&
+                                                                                                min.test === 1 &&
+                                                                                                min.late === 1
+                                                                                                    ? '#3a2a62'
+                                                                                                    : '#989898',
+                                                                                        }}
+                                                                                    >
+                                                                                        {min.timeStart}
+                                                                                    </Text>
+                                                                                </View>
+                                                                            </TouchableWithoutFeedback>
+                                                                        ))}
+                                                                    </View>
                                                                 </View>
-                                                            </View>
-                                                        ))}
+                                                            ))}
+                                                        </View>
                                                     </View>
                                                 </View>
-                                            </View>
+                                            </React.Fragment>
                                         );
                                     })
                                 ) : (

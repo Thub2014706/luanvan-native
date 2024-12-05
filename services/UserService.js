@@ -11,18 +11,18 @@ import {
     logoutSuccess,
 } from '~/redux/auth/authSlice';
 import Toast from 'react-native-toast-message';
-axios.defaults.withCredentials = true;
+// axios.defaults.withCredentials = true;
 
-export const axiosJWT = axios.create();
+// export const axiosJWT = axios.create();
 
-export const refreshToken = async () => {
-    try {
-        const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/api/user/refresh-token`);
-        return response.data;
-    } catch (error) {
-        console.log('loi', error);
-    }
-};
+// export const refreshToken = async () => {
+//     try {
+//         const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/api/user/refresh-token`);
+//         return response.data;
+//     } catch (error) {
+//         console.log('loi', error);
+//     }
+// };
 
 export const login = async (user, dispatch) => {
     // console.log('wedwe', user);
@@ -71,7 +71,7 @@ export const register = async (user) => {
     }
 };
 
-export const logout = async (dispatch, token) => {
+export const logout = async (dispatch, token, axiosJWT) => {
     dispatch(logoutStart());
     // console.log('qq');
     

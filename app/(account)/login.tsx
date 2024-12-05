@@ -14,7 +14,7 @@ import { login, register } from '~/services/UserService';
 import { useDispatch, useSelector } from 'react-redux';
 import { HEIGHT, WIDTH } from '~/constants';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { router, useLocalSearchParams } from 'expo-router';
+import { Link, router, useLocalSearchParams } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import BackIcon from '~/components/BackIcon/BackIcon';
 
@@ -183,6 +183,27 @@ const Login = () => {
                                 <Text style={{ fontSize: 16 }}>{war}</Text>
                             </View>
                         )}
+                        <View style={{marginTop: 15}}>
+                            {isLogin ? (
+                                <Text>
+                                    Bạn chưa có tài khoản?{' '}
+                                    <Text style={{ color: '#69259d' }}>
+                                        <Link href={{ pathname: '/(account)/login', params: { isLog: false } }}>
+                                            Đăng ký ngay
+                                        </Link>
+                                    </Text>
+                                </Text>
+                            ) : (
+                                <Text>
+                                    Bạn đã có tài khoản?{' '}
+                                    <Text style={{ color: '#69259d' }}>
+                                        <Link href={{ pathname: '/(account)/login', params: { isLog: true } }}>
+                                            Đăng nhập ngay
+                                        </Link>
+                                    </Text>
+                                </Text>
+                            )}
+                        </View>
                     </View>
                 </View>
             </ScrollView>

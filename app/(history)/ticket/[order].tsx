@@ -51,8 +51,8 @@ const DetailTicket = () => {
     // console.log(order);
     useEffect(() => {
         const fetch = async () => {
-            if (order !== null) {
-                const data = await ticketRefundByOrder(order._id);
+            if (orderDetail !== null) {
+                const data = await ticketRefundByOrder(orderDetail._id);
                 if (data) {
                     setRefund(data);
                 }

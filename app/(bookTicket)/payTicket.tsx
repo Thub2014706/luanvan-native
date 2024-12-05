@@ -33,6 +33,8 @@ import { cancelHold, holdPay } from '~/services/RedisService';
 import { addOrderTicket } from '~/services/OrderTicketService';
 import { checkStatus, momoPaymentTicket } from '~/services/MomoService';
 import { WebView } from 'react-native-webview';
+import { createAxios } from '~/createInstance';
+import { loginSuccess } from '~/redux/auth/authSlice';
 
 const PayTicket = () => {
     const listTicket = useSelector((state) => state.cart.cartTicket);
@@ -55,6 +57,7 @@ const PayTicket = () => {
     const [switchPoint, setSwitchPoint] = useState(false);
     const [flag, setFlag] = useState(false);
     const [orderId, setOrderId] = useState(null);
+    let axiosJWT = createAxios(user, dispatch, loginSuccess);
 
     useEffect(() => {
         const fetch = async () => {
@@ -269,7 +272,7 @@ const PayTicket = () => {
                                     text: 'Đóng',
                                     onPress: () => {
                                         dispatch(clearAllTicket());
-                                        router.navigate('/');
+                                        router.replace('/');
                                         setFlag(true);
                                     },
                                 },
@@ -366,6 +369,7 @@ const PayTicket = () => {
                     usePoint: point,
                 },
                 user?.accessToken,
+                axiosJWT,
             );
             setOrderId(data.orderId);
             Linking.openURL(data.payUrl);
@@ -568,7 +572,13 @@ const PayTicket = () => {
                                     }}
                                 >
                                     <TextInput
-                                        style={[styles.input, { borderColor: !switchPoint ? 'gray' : '#c7c7c7' }]}
+                                        style={[
+                                            styles.input,
+                                            {
+                                                borderColor: !switchPoint ? 'gray' : '#c7c7c7',
+                                                color: !switchPoint ? 'black' : '#c7c7c7',
+                                            },
+                                        ]}
                                         onChangeText={(value) => setPoint(value)}
                                         value={point === 0 ? '' : point.toString()}
                                         placeholder="Nhập tối thiểu 20000P"
@@ -748,7 +758,7 @@ const styles = StyleSheet.create({
     input: {
         height: 35,
         borderWidth: 1,
-        padding: 10,
+        padding: 5,
         width: '50%',
         borderRadius: 5,
     },
