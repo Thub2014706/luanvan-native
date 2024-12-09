@@ -24,9 +24,6 @@ import ReviewFilm from '~/components/ReviewFilm/ReviewFilm';
 
 const pickerStyle = {
     inputIOS: {
-        // borderColor: 'gray',
-        // borderWidth: 5,
-        // borderStyle: 'solid',
         borderRadius: 5,
         backgroundColor: '#e1e1e1',
         marginVertical: 10,
@@ -53,7 +50,6 @@ const DetailFilm = () => {
     const [selectPro, setSelectPro] = useState();
     const [theaters, setTheaters] = useState([]);
     const router = useRouter();
-    
 
     useEffect(() => {
         const fetch = async () => {
@@ -189,17 +185,19 @@ const DetailFilm = () => {
                                 );
                             })}
                         </View>
-                        <View style={styles.inline}>
-                            <Text>Diễn viên: </Text>
-                            {film.arrayPerformer.map((item, index) => {
-                                return (
-                                    <Text key={index} style={styles.text}>
-                                        {item}
-                                        {index < film.arrayPerformer.length - 1 && ', '}
-                                    </Text>
-                                );
-                            })}
-                        </View>
+                        {film.arrayPerformer.length > 0 && (
+                            <View style={styles.inline}>
+                                <Text>Diễn viên: </Text>
+                                {film.arrayPerformer.map((item, index) => {
+                                    return (
+                                        <Text key={index} style={styles.text}>
+                                            {item}
+                                            {index < film.arrayPerformer.length - 1 && ', '}
+                                        </Text>
+                                    );
+                                })}
+                            </View>
+                        )}
                         <View>
                             <Text>Mô tả phim: </Text>
                             <RenderHTML
@@ -226,7 +224,10 @@ const DetailFilm = () => {
                             ItemSeparatorComponent={() => <View style={{ width: 5 }} />}
                         ></FlatList>
                         <RNPickerSelect
-                            onValueChange={(value) => setSelectPro(value)}
+                            onValueChange={(value) => {
+                                setSelectPro(value);
+                                console.log('aaaaaaaaaaaa');
+                            }}
                             items={province}
                             style={pickerStyle}
                             placeholder={{

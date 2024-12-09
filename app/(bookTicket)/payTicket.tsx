@@ -203,62 +203,144 @@ const PayTicket = () => {
     //     }, 700);
     // };
 
+    // console.log(orderId);
+
+    // useEffect(() => {
+    //     let interval;
+    //     let startTime = Date.now();
+    //     const startCountdown = () => {
+    //         interval = setInterval(async () => {
+    //             const timePassed = Math.floor((Date.now() - startTime) / 1000);
+    //             const remainingTime = timePay - timePassed;
+
+    //             if (orderId !== null && !flag) {
+    //                 setFlag(true);
+    //                 clearInterval(interval);
+    //                 const check = await checkStatus({ orderId });
+    //                 console.log(check);
+
+    //                 if (check.resultCode === 0) {
+    //                     Alert.alert('Thông báo', 'Giao dịch thành công. Đến trang lịch sử để xem lại giao dịch nhé!', [
+    //                         {
+    //                             text: 'Đồng ý',
+    //                             onPress: async () => {
+    //                                 dispatch(clearAllTicket());
+    //                                 router.navigate('/');
+    //                                 await cancelHold(listTicket.showTime, listTicket.seats);
+    //                                 setFlag(true);
+    //                             },
+    //                         },
+    //                     ]);
+    //                 } else if (check.resultCode === 1000) {
+    //                     // Alert.alert('Thông báo', 'Bạn đang trong quá trình giao dịch, hãy tiếp tục thanh toán!', [
+    //                     //     {
+    //                     //         text: 'Đồng ý',
+    //                     //         onPress: () => {
+    //                     //             setFlag(true);
+    //                     //         },
+    //                     //     },
+    //                     // ]);
+    //                     console.log('Đang xử lý giao dịch... sẽ tiếp tục kiểm tra');
+    //                 } else if (check.resultCode !== 0 && check.resultCode !== 1000) {
+    //                     Alert.alert('Thông báo', 'Giao dịch thất bại. Vui lòng thực hiện giao dịch mới!', [
+    //                         {
+    //                             text: 'Đóng',
+    //                             onPress: async () => {
+    //                                 await cancelHold(listTicket.showTime, listTicket.seats);
+    //                                 setFlag(true);
+    //                                 dispatch(clearAllTicket());
+    //                                 router.navigate('/');
+    //                             },
+    //                         },
+    //                     ]);
+    //                 } else {
+    //                     interval = setInterval(startCountdown, 3000);
+    //                 }
+    //             } else {
+    //                 if (remainingTime <= 0 && !flag) {
+    //                     setFlag(true);
+    //                     clearInterval(interval);
+    //                     setTime(0);
+    //                     Alert.alert(
+    //                         'Thông báo',
+    //                         'Đã quá thời gian thực hiện giao dịch của bạn. Vui lòng thực hiện giao dịch mới!',
+    //                         [
+    //                             {
+    //                                 text: 'Đóng',
+    //                                 onPress: () => {
+    //                                     dispatch(clearAllTicket());
+    //                                     router.replace('/');
+    //                                     setFlag(true);
+    //                                 },
+    //                             },
+    //                         ],
+    //                     );
+    //                     // console.log(time);
+    //                 } else if (remainingTime > 0) {
+    //                     setTime(timePay - timePassed);
+    //                 }
+    //             }
+    //         }, 1000);
+    //     };
+    //     startCountdown();
+
+    //     return () => {
+    //         if (interval) {
+    //             clearInterval(interval);
+    //         }
+    //     };
+    // }, [timePay, flag, dispatch, orderId]);
+
     useEffect(() => {
         let interval;
         let startTime = Date.now();
+    
+        const checkAndHandleStatus = async () => {
+            const check = await checkStatus({ orderId });
+            console.log(check);
+    
+            if (check.resultCode === 0) {
+                clearInterval(interval);
+                Alert.alert('Thông báo', 'Giao dịch thành công. Đến trang lịch sử để xem lại giao dịch nhé!', [
+                    {
+                        text: 'Đồng ý',
+                        onPress: async () => {
+                            dispatch(clearAllTicket());
+                            router.replace('/(history)/history');
+                            await cancelHold(listTicket.showTime, listTicket.seats);
+                            setFlag(true);
+                        },
+                    },
+                ]);
+            } else if (check.resultCode === 1000) {
+                console.log('Đang xử lý giao dịch... sẽ tiếp tục kiểm tra');
+                // Không dừng interval, để tiếp tục kiểm tra mỗi giây
+            } else {
+                clearInterval(interval);
+                Alert.alert('Thông báo', 'Giao dịch thất bại. Vui lòng thực hiện giao dịch mới!', [
+                    {
+                        text: 'Đóng',
+                        onPress: async () => {
+                            await cancelHold(listTicket.showTime, listTicket.seats);
+                            setFlag(true);
+                            dispatch(clearAllTicket());
+                            router.replace('/');
+                        },
+                    },
+                ]);
+            }
+        };
+    
         const startCountdown = () => {
             interval = setInterval(async () => {
                 const timePassed = Math.floor((Date.now() - startTime) / 1000);
                 const remainingTime = timePay - timePassed;
-
-                if (orderId !== null && !flag) {
+    
+                console.log(orderId, flag);
+                
+                if (orderId !== null) {
                     setFlag(true);
-                    clearInterval(interval);
-                    const check = await checkStatus({ orderId });
-                    // console.log(check);
-
-                    if (check.resultCode === 0) {
-                        Alert.alert('Thông báo', 'Giao dịch thành công. Đến trang lịch sử để xem lại giao dịch nhé!', [
-                            {
-                                text: 'Đồng ý',
-                                onPress: async () => {
-                                    dispatch(clearAllTicket());
-                                    router.navigate('/(history)/history');
-                                    await cancelHold(listTicket.showTime, listTicket.seats);
-                                    setFlag(true);
-                                },
-                            },
-                        ]);
-                    } else if (check.resultCode === 1000) {
-                        Alert.alert('Thông báo', 'Bạn đang trong quá trình giao dịch, hãy tiếp tục thanh toán!', [
-                            {
-                                text: 'Đồng ý',
-                                onPress: () => {
-                                    // if (url) {
-                                    // Linking.openURL(url);
-                                    // }
-                                    // dispatch(clearAllTicket());
-                                    // router.navigate('/');
-                                    setFlag(true);
-                                    // interval = setInterval(startCountdown, 3000);
-                                },
-                            },
-                        ]);
-                    } else if (check.resultCode !== 0 && check.resultCode !== 1000) {
-                        Alert.alert('Thông báo', 'Giao dịch thất bại. Vui lòng thực hiện giao dịch mới!', [
-                            {
-                                text: 'Đóng',
-                                onPress: async () => {
-                                    await cancelHold(listTicket.showTime, listTicket.seats);
-                                    setFlag(true);
-                                    dispatch(clearAllTicket());
-                                    router.navigate('/');
-                                },
-                            },
-                        ]);
-                    } else {
-                        interval = setInterval(startCountdown, 3000);
-                    }
+                    await checkAndHandleStatus();
                 } else {
                     if (remainingTime <= 0 && !flag) {
                         setFlag(true);
@@ -278,21 +360,22 @@ const PayTicket = () => {
                                 },
                             ],
                         );
-                        // console.log(time);
                     } else if (remainingTime > 0) {
-                        setTime(timePay - timePassed);
+                        setTime(remainingTime);
                     }
                 }
             }, 1000);
         };
+    
         startCountdown();
-
+    
         return () => {
             if (interval) {
                 clearInterval(interval);
             }
         };
     }, [timePay, flag, dispatch, orderId]);
+    
 
     // useEffect(() => {
     //     const fetch = async () => {

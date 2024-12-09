@@ -68,7 +68,14 @@ const account = () => {
             ) : (
                 <View style={styles.container}>
                     <View style={{ flexDirection: 'row', gap: 10 }}>
-                        <ImageBase pathImg={userInfo.avatar} style={{ height: 70, width: 70, borderRadius: 70 }} />
+                        {userInfo.avatar ? (
+                            <ImageBase pathImg={userInfo.avatar} style={{ height: 70, width: 70, borderRadius: 70 }} />
+                        ) : (
+                            <Image
+                                source={require('~/assets/images/user-circle-512.webp')}
+                                style={{ height: 70, width: 70 }}
+                            />
+                        )}
                         <View style={{ paddingHorizontal: 10 }}>
                             <Text style={{ fontSize: 18, fontWeight: '500' }}>{userInfo.username}</Text>
                             <Text style={{ fontWeight: '300' }}>{userInfo.phone}</Text>
