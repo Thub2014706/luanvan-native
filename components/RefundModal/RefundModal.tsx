@@ -33,7 +33,7 @@ const RefundModal = ({ setModalVisible, modalVisible, id }) => {
                             Điều kiện và điều khoản
                         </Text>
                         <Text>
-                            - Bạn chỉ có thể hoàn vé tối đa 2 lần/tháng nếu ở cấp độ Member hoặc 5 lần/tháng nếu ở cấp
+                            - Bạn chỉ có thể hoàn vé tối đa 2 lần/tháng nếu ở cấp độ Member hoặc 3 lần/tháng nếu ở cấp
                             độ VIP.
                         </Text>
                         <Text>- Bạn có thể yêu cầu hoàn vé trước 60 PHÚT suất chiếu diễn ra.</Text>
